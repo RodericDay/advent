@@ -3,9 +3,13 @@ import re, collections, types
 
 class Game:
 
-    class WinEvent(RuntimeError): pass
-    class LoseEvent(RuntimeError): pass
-    class InvalidEvent(RuntimeError): pass
+    class Event(RuntimeError):
+        def __init__(self, state):
+            self.state = state
+
+    class WinEvent(Event): pass
+    class LoseEvent(Event): pass
+    class InvalidEvent(Event): pass
 
     def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk,
                  effect_stack=None, spell_history=None):
@@ -19,9 +23,9 @@ class Game:
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
         try:
-            if self.enemy_hp < 1: raise Game.WinEvent
-            if self.player_hp < 1: raise Game.LoseEvent
-            if self.player_mp < 0: raise Game.InvalidEvent
+            if self.enemy_hp < 1: raise Game.WinEvent(self)
+            if self.player_hp < 1: raise Game.LoseEvent(self)
+            if self.player_mp < 0: raise Game.InvalidEvent(self)
         except AttributeError:
             pass
 
@@ -70,7 +74,7 @@ def resolve(spell_cast, state, hard_mode=False):
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
-        if spell_cast in state.effect_stack: raise Game.InvalidEvent
+        if spell_cast in state.effect_stack: raise Game.InvalidEvent(state)
         state.player_mp -= spell_book[spell_cast].cost
         state.effect_stack += (spell_cast,) * spell_book[spell_cast].duration
         if spell_cast == 'Magic Missile': state.enemy_hp -= 4
@@ -100,10 +104,8 @@ def breadth_first_search(valid_states):
         for spell in (spell_book if state.is_player_turn else [None]):
             try:
                 yield resolve(spell, state, hard_mode=True)
-            except Game.WinEvent:
-                end_state = state.copy()
-                end_state.spell_history += (spell,)
-                win_states.append(end_state)
+            except Game.WinEvent as event:
+                win_states.append(event.state)
             except (Game.LoseEvent, Game.InvalidEvent):
                 pass
 
