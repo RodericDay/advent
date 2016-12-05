@@ -7,12 +7,12 @@ class Game:
     class LoseState(RuntimeError): pass
     class InvalidState(RuntimeError): pass
 
-    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, ongoing=None, spell_history=None):
+    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, effect_stack=None, spell_history=None):
         self.player_hp = player_hp
         self.player_mp = player_mp
         self.enemy_hp = enemy_hp
         self.enemy_atk = enemy_atk
-        self.ongoing = ongoing
+        self.effect_stack = effect_stack or tuple()
         self.spell_history = spell_history or tuple()
 
     def __setattr__(self, key, value):
@@ -27,6 +27,13 @@ class Game:
     @property
     def is_player_turn(self):
         return len(self.spell_history)%2==0
+
+    def consume_active_effects(self):
+        counter = collections.Counter(self.effect_stack)
+        active = set(counter.elements())
+        counter -= {k:1 for k in active}
+        self.effect_stack = tuple(counter.elements())
+        return active
 
     def copy(self):
         return Game(**self.__dict__)
@@ -53,18 +60,15 @@ def resolve(spell_cast, state, hard=False):
     if hard and state.is_player_turn:
         state.player_hp -= 1
 
-    # resolve ongoing effects
-    ongoing_spells = collections.Counter(state.ongoing)
-    active = set(ongoing_spells.elements())
-    ongoing_spells -= {k:1 for k in active}  # decrease cooldown
+    active = state.consume_active_effects()
     player_def = 7 if 'Shield' in active else 0
     state.player_mp += 101 if 'Recharge' in active else 0
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
-        if spell_cast in ongoing_spells.elements(): raise Game.InvalidState
+        if spell_cast in state.effect_stack: raise Game.InvalidState
         state.player_mp -= spell_book[spell_cast].cost
-        ongoing_spells[spell_cast] = spell_book[spell_cast].duration
+        state.effect_stack += (spell_cast,) * spell_book[spell_cast].duration
         if spell_cast == 'Magic Missile': state.enemy_hp -= 4
         if spell_cast == 'Drain': state.enemy_hp -= 2; state.player_hp += 2
 
@@ -72,7 +76,6 @@ def resolve(spell_cast, state, hard=False):
         state.player_hp -= max(1, state.enemy_atk-player_def)
 
     state.spell_history += (spell_cast,)
-    state.ongoing = tuple(ongoing_spells.elements())
     return state
 
 def check_sequence(state, sequence):
