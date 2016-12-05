@@ -1,13 +1,26 @@
 import re, collections, types
 
+
 class GameState:
 
-    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, ongoing):
+    class Event(RuntimeError):
+        pass
+
+    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, ongoing=None):
         self.player_hp = player_hp
         self.player_mp = player_mp
         self.enemy_hp = enemy_hp
         self.enemy_atk = enemy_atk
         self.ongoing = ongoing
+
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
+        try:
+            if self.player_hp < 1: raise GameState.Event("lose")
+            if self.player_mp < 0: raise GameState.Event("invalid")
+            if self.enemy_hp < 1: raise GameState.Event("win")
+        except AttributeError:
+            pass
 
     def copy(self):
         return GameState(**self.__dict__)
@@ -34,7 +47,6 @@ def resolve(spell_cast, state, hard=False):
 
     if hard and player_turn:
         state.player_hp -= 1
-        if state.player_hp < 1: return "loss", None
 
     # resolve ongoing effects
     ongoing_spells = collections.Counter(state.ongoing)
@@ -43,37 +55,29 @@ def resolve(spell_cast, state, hard=False):
     player_def = 7 if 'Shield' in active else 0
     state.player_mp += 101 if 'Recharge' in active else 0
     state.enemy_hp -= 3 if 'Poison' in active else 0
-    if state.enemy_hp < 1: return "win", None
 
     if player_turn:
-        # casting an active spell is invalid
-        if spell_cast in ongoing_spells.elements(): return "invalid", None
-        # casting a spell without required mp is invalid
+        if spell_cast in ongoing_spells.elements(): raise GameState.Event("invalid")
         state.player_mp -= spell_book[spell_cast].cost
-        if state.player_mp < 0: return "invalid", None
-        # assign cooldown
         ongoing_spells[spell_cast] = spell_book[spell_cast].duration
-        # handle instantaneous spells
         if spell_cast == 'Magic Missile': state.enemy_hp -= 4
         if spell_cast == 'Drain': state.enemy_hp -= 2; state.player_hp += 2
-        # win condition
-        if state.enemy_hp < 1: return "win", None
 
     else:
         state.player_hp -= max(1, state.enemy_atk-player_def)
-        if state.player_hp < 1: return "loss", None
 
-    # state transfer
     state.ongoing = tuple(ongoing_spells.elements())
-    return "ongoing", state
+    return state
 
 def resolve_sequence(state, sequence):
-    for spell in (action for spell in sequence for action in [spell, None]):
-        status, state = resolve(spell, state)
-    return status
+    try:
+        for spell in (action for spell in sequence for action in [spell, None]):
+            state = resolve(spell, state)
+    except GameState.Event as event:
+        return str(event)
 
-assert resolve_sequence(GameState(10, 250, 13, 8, None), ['Poison', 'Magic Missile']) == 'win'
-assert resolve_sequence(GameState(10, 250, 14, 8, None), ['Recharge','Shield','Drain','Poison','Magic Missile']) == "win"
+assert resolve_sequence(GameState(10, 250, 13, 8), ['Poison', 'Magic Missile']) == "win"
+assert resolve_sequence(GameState(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile']) == "win"
 
 def breadth_first_search(valid_states, successful_sequences):
     ''' consider only valid branches, keep track of successful ones '''
@@ -81,17 +85,23 @@ def breadth_first_search(valid_states, successful_sequences):
     for history, state in valid_states:
         for spell in (spell_book if len(history)%2==0 else [None]):
             new_history = history + [spell]
-            status, new_state = resolve(spell, state, hard=True)
-            if status=='ongoing':
+
+            try:
+                new_state = resolve(spell, state, hard=True)
                 ongoing_states.append((new_history, new_state))
-            if status=='win':
-                successful_sequences.append(new_history)
+
+            except GameState.Event as status:
+                if str(status)=='win':
+                    successful_sequences.append(new_history)
+
     return ongoing_states
 
-ongoing_states = [([],GameState(50, 500, 51, 9, None))]
+
+ongoing_states = [([], GameState(50, 500, 51, 9))]
 successful_sequences = []
 for n in range(16):
     ongoing_states = breadth_first_search(ongoing_states, successful_sequences)
+
 
 ans = 9999
 for timeline in successful_sequences:
