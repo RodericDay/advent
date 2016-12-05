@@ -3,11 +3,12 @@ import re, collections, types
 
 class Game:
 
-    class WinState(RuntimeError): pass
-    class LoseState(RuntimeError): pass
-    class InvalidState(RuntimeError): pass
+    class WinEvent(RuntimeError): pass
+    class LoseEvent(RuntimeError): pass
+    class InvalidEvent(RuntimeError): pass
 
-    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, effect_stack=None, spell_history=None):
+    def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk,
+                 effect_stack=None, spell_history=None):
         self.player_hp = player_hp
         self.player_mp = player_mp
         self.enemy_hp = enemy_hp
@@ -18,9 +19,9 @@ class Game:
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
         try:
-            if self.enemy_hp < 1: raise Game.WinState
-            if self.player_hp < 1: raise Game.LoseState
-            if self.player_mp < 0: raise Game.InvalidState
+            if self.enemy_hp < 1: raise Game.WinEvent
+            if self.player_hp < 1: raise Game.LoseEvent
+            if self.player_mp < 0: raise Game.InvalidEvent
         except AttributeError:
             pass
 
@@ -28,7 +29,7 @@ class Game:
     def is_player_turn(self):
         return len(self.spell_history)%2==0
 
-    def consume_active_effects(self):
+    def consume_effect_stack(self):
         counter = collections.Counter(self.effect_stack)
         active = set(counter.elements())
         counter -= {k:1 for k in active}
@@ -54,19 +55,18 @@ spell_book = {
 }
 
 
-def resolve(spell_cast, state, hard=False):
+def resolve(spell_cast, state, hard_mode=False):
     state = state.copy()
 
-    if hard and state.is_player_turn:
-        state.player_hp -= 1
+    if state.is_player_turn and hard_mode: state.player_hp -= 1
 
-    active = state.consume_active_effects()
+    active = state.consume_effect_stack()
     player_def = 7 if 'Shield' in active else 0
     state.player_mp += 101 if 'Recharge' in active else 0
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
-        if spell_cast in state.effect_stack: raise Game.InvalidState
+        if spell_cast in state.effect_stack: raise Game.InvalidEvent
         state.player_mp -= spell_book[spell_cast].cost
         state.effect_stack += (spell_cast,) * spell_book[spell_cast].duration
         if spell_cast == 'Magic Missile': state.enemy_hp -= 4
@@ -82,7 +82,7 @@ def check_sequence(state, sequence):
     try:
         for spell in (action for spell in sequence for action in [spell, None]):
             state = resolve(spell, state)
-    except Game.WinState:
+    except Game.WinEvent:
         return True
 
 assert check_sequence(Game(10, 250, 13, 8), ['Poison', 'Magic Missile'])
@@ -95,10 +95,10 @@ def breadth_first_search(valid_states):
     for state in valid_states:
         for spell in (spell_book if state.is_player_turn else [None]):
             try:
-                yield resolve(spell, state, hard=True)
-            except Game.WinState:
+                yield resolve(spell, state, hard_mode=True)
+            except Game.WinEvent:
                 successful_sequences_found.extend([state.spell_history+(spell,)])
-            except (Game.LoseState, Game.InvalidState):
+            except (Game.LoseEvent, Game.InvalidEvent):
                 pass
 
 
