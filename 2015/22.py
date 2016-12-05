@@ -85,7 +85,8 @@ assert resolve_sequence(GameState(10, 250, 13, 8), ['Poison', 'Magic Missile']) 
 assert resolve_sequence(GameState(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile']) == "win"
 
 
-def breadth_first_search(valid_states, successful_sequences):
+successful_sequences_found = []
+def breadth_first_search(valid_states):
     ''' consider only valid branches, keep track of successful ones '''
     for state in valid_states:
         for spell in (spell_book if state.is_player_turn else [None]):
@@ -93,17 +94,16 @@ def breadth_first_search(valid_states, successful_sequences):
                 yield resolve(spell, state, hard=True)
             except GameState.Event as status:
                 if str(status)=='win':
-                    successful_sequences.append(state.spell_history+(spell,))
+                    successful_sequences_found.extend([state.spell_history+(spell,)])
 
 
 ongoing_states = [GameState(50, 500, 51, 9)]
-successful_sequences = []
-for n in range(16):
-    ongoing_states = list(breadth_first_search(ongoing_states, successful_sequences))
+for n in range(16):  # how many turns in
+    ongoing_states = list(breadth_first_search(ongoing_states))
 
 
 ans = 9999
-for timeline in successful_sequences:
+for timeline in successful_sequences_found:
     cost = sum(spell_book[spell].cost for spell in timeline if spell)
     if cost and cost <= ans:
         ans = cost
