@@ -38,6 +38,13 @@ class Game:
     def total_mana_spent(self):
         return sum(spell_book[spell].cost for spell in self.spell_history)
 
+    def cast_spell(self, spell):
+        self.spell_history += (spell,)
+        if spell not in spell_book: raise Game.InvalidEvent(self)
+        if spell in self.effect_stack: raise Game.InvalidEvent(self)
+        self.player_mp -= spell_book[spell].cost
+        self.effect_stack += (spell,) * spell_book[spell].duration
+
     def consume_effect_stack(self):
         counter = collections.Counter(self.effect_stack)
         active = set(counter.elements())
@@ -64,7 +71,7 @@ spell_book = {
 }
 
 
-def resolve(spell_cast, state, hard_mode=False):
+def resolve(spell, state, hard_mode=False):
     state = state.copy()
 
     if state.is_player_turn and hard_mode: state.player_hp -= 1
@@ -75,13 +82,9 @@ def resolve(spell_cast, state, hard_mode=False):
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
-        state.spell_history += (spell_cast,)
-        if spell_cast not in spell_book: raise Game.InvalidEvent(state)
-        if spell_cast in state.effect_stack: raise Game.InvalidEvent(state)
-        state.player_mp -= spell_book[spell_cast].cost
-        state.effect_stack += (spell_cast,) * spell_book[spell_cast].duration
-        if spell_cast == 'Magic Missile': state.enemy_hp -= 4
-        if spell_cast == 'Drain': state.enemy_hp -= 2; state.player_hp += 2
+        state.cast_spell(spell)  # handle generic spell stuff
+        if spell == 'Magic Missile': state.enemy_hp -= 4
+        if spell == 'Drain': state.enemy_hp -= 2; state.player_hp += 2
 
     else:
         state.player_hp -= max(1, state.enemy_atk-player_def)
