@@ -1,10 +1,11 @@
 import re, collections, types
 
 
-class GameState:
+class Game:
 
-    class Event(RuntimeError):
-        pass
+    class WinState(RuntimeError): pass
+    class LoseState(RuntimeError): pass
+    class InvalidState(RuntimeError): pass
 
     def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk, ongoing=None, spell_history=None):
         self.player_hp = player_hp
@@ -17,9 +18,9 @@ class GameState:
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
         try:
-            if self.player_hp < 1: raise GameState.Event("lose")
-            if self.player_mp < 0: raise GameState.Event("invalid")
-            if self.enemy_hp < 1: raise GameState.Event("win")
+            if self.enemy_hp < 1: raise Game.WinState
+            if self.player_hp < 1: raise Game.LoseState
+            if self.player_mp < 0: raise Game.InvalidState
         except AttributeError:
             pass
 
@@ -28,12 +29,12 @@ class GameState:
         return len(self.spell_history)%2==0
 
     def copy(self):
-        return GameState(**self.__dict__)
+        return Game(**self.__dict__)
 
     def __str__(self):
         inner = ", ".join("{}={}".format(k, getattr(self, k))
             for k in ["player_hp", "enemy_hp"])
-        return "GameState({})".format(inner)
+        return "Game({})".format(inner)
 
 
 Spell = collections.namedtuple("Spell", "cost duration")
@@ -61,7 +62,7 @@ def resolve(spell_cast, state, hard=False):
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
-        if spell_cast in ongoing_spells.elements(): raise GameState.Event("invalid")
+        if spell_cast in ongoing_spells.elements(): raise Game.InvalidState
         state.player_mp -= spell_book[spell_cast].cost
         ongoing_spells[spell_cast] = spell_book[spell_cast].duration
         if spell_cast == 'Magic Missile': state.enemy_hp -= 4
@@ -74,15 +75,15 @@ def resolve(spell_cast, state, hard=False):
     state.ongoing = tuple(ongoing_spells.elements())
     return state
 
-def resolve_sequence(state, sequence):
+def check_sequence(state, sequence):
     try:
         for spell in (action for spell in sequence for action in [spell, None]):
             state = resolve(spell, state)
-    except GameState.Event as event:
-        return str(event)
+    except Game.WinState:
+        return True
 
-assert resolve_sequence(GameState(10, 250, 13, 8), ['Poison', 'Magic Missile']) == "win"
-assert resolve_sequence(GameState(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile']) == "win"
+assert check_sequence(Game(10, 250, 13, 8), ['Poison', 'Magic Missile'])
+assert check_sequence(Game(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile'])
 
 
 successful_sequences_found = []
@@ -92,12 +93,13 @@ def breadth_first_search(valid_states):
         for spell in (spell_book if state.is_player_turn else [None]):
             try:
                 yield resolve(spell, state, hard=True)
-            except GameState.Event as status:
-                if str(status)=='win':
-                    successful_sequences_found.extend([state.spell_history+(spell,)])
+            except Game.WinState:
+                successful_sequences_found.extend([state.spell_history+(spell,)])
+            except (Game.LoseState, Game.InvalidState):
+                pass
 
 
-ongoing_states = [GameState(50, 500, 51, 9)]
+ongoing_states = [Game(50, 500, 51, 9)]
 for n in range(16):  # how many turns in
     ongoing_states = list(breadth_first_search(ongoing_states))
 
