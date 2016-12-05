@@ -84,27 +84,22 @@ def resolve_sequence(state, sequence):
 assert resolve_sequence(GameState(10, 250, 13, 8), ['Poison', 'Magic Missile']) == "win"
 assert resolve_sequence(GameState(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile']) == "win"
 
+
 def breadth_first_search(valid_states, successful_sequences):
     ''' consider only valid branches, keep track of successful ones '''
-    ongoing_states = []
     for state in valid_states:
         for spell in (spell_book if state.is_player_turn else [None]):
-
             try:
-                new_state = resolve(spell, state, hard=True)
-                ongoing_states.append(new_state)
-
+                yield resolve(spell, state, hard=True)
             except GameState.Event as status:
                 if str(status)=='win':
                     successful_sequences.append(state.spell_history+(spell,))
-
-    return ongoing_states
 
 
 ongoing_states = [GameState(50, 500, 51, 9)]
 successful_sequences = []
 for n in range(16):
-    ongoing_states = breadth_first_search(ongoing_states, successful_sequences)
+    ongoing_states = list(breadth_first_search(ongoing_states, successful_sequences))
 
 
 ans = 9999
