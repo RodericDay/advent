@@ -12,14 +12,14 @@ class Game:
     class InvalidEvent(Event): pass
 
     def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk,
-                 effect_stack=None, spell_history=None, turn=None):
+                 effect_stack=tuple(), spell_history=tuple(), turn=1):
         self.player_hp = player_hp
         self.player_mp = player_mp
         self.enemy_hp = enemy_hp
         self.enemy_atk = enemy_atk
-        self.effect_stack = effect_stack or tuple()
-        self.spell_history = spell_history or tuple()
-        self.turn = turn or 1
+        self.effect_stack = effect_stack
+        self.spell_history = spell_history
+        self.turn = turn
 
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
