@@ -12,13 +12,14 @@ class Game:
     class InvalidEvent(Event): pass
 
     def __init__(self, player_hp, player_mp, enemy_hp, enemy_atk,
-                 effect_stack=None, spell_history=None):
+                 effect_stack=None, spell_history=None, turn=None):
         self.player_hp = player_hp
         self.player_mp = player_mp
         self.enemy_hp = enemy_hp
         self.enemy_atk = enemy_atk
         self.effect_stack = effect_stack or tuple()
         self.spell_history = spell_history or tuple()
+        self.turn = turn or 1
 
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
@@ -31,11 +32,11 @@ class Game:
 
     @property
     def is_player_turn(self):
-        return len(self.spell_history)%2==0
+        return self.turn % 2 == 1
 
     @property
     def total_mana_spent(self):
-        return sum(spell_book[spell].cost for spell in self.spell_history if spell)
+        return sum(spell_book[spell].cost for spell in self.spell_history)
 
     def consume_effect_stack(self):
         counter = collections.Counter(self.effect_stack)
@@ -74,6 +75,8 @@ def resolve(spell_cast, state, hard_mode=False):
     state.enemy_hp -= 3 if 'Poison' in active else 0
 
     if state.is_player_turn:
+        state.spell_history += (spell_cast,)
+        if spell_cast not in spell_book: raise Game.InvalidEvent(state)
         if spell_cast in state.effect_stack: raise Game.InvalidEvent(state)
         state.player_mp -= spell_book[spell_cast].cost
         state.effect_stack += (spell_cast,) * spell_book[spell_cast].duration
@@ -83,7 +86,7 @@ def resolve(spell_cast, state, hard_mode=False):
     else:
         state.player_hp -= max(1, state.enemy_atk-player_def)
 
-    state.spell_history += (spell_cast,)
+    state.turn += 1
     return state
 
 def check_sequence(state, sequence):
