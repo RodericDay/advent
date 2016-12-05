@@ -29,6 +29,10 @@ class Game:
     def is_player_turn(self):
         return len(self.spell_history)%2==0
 
+    @property
+    def total_mana_spent(self):
+        return sum(spell_book[spell].cost for spell in self.spell_history if spell)
+
     def consume_effect_stack(self):
         counter = collections.Counter(self.effect_stack)
         active = set(counter.elements())
@@ -89,7 +93,7 @@ assert check_sequence(Game(10, 250, 13, 8), ['Poison', 'Magic Missile'])
 assert check_sequence(Game(10, 250, 14, 8), ['Recharge','Shield','Drain','Poison','Magic Missile'])
 
 
-successful_sequences_found = []
+win_states = []
 def breadth_first_search(valid_states):
     ''' consider only valid branches, keep track of successful ones '''
     for state in valid_states:
@@ -97,7 +101,9 @@ def breadth_first_search(valid_states):
             try:
                 yield resolve(spell, state, hard_mode=True)
             except Game.WinEvent:
-                successful_sequences_found.extend([state.spell_history+(spell,)])
+                end_state = state.copy()
+                end_state.spell_history += (spell,)
+                win_states.append(end_state)
             except (Game.LoseEvent, Game.InvalidEvent):
                 pass
 
@@ -107,9 +113,5 @@ for n in range(16):  # how many turns in
     ongoing_states = list(breadth_first_search(ongoing_states))
 
 
-ans = 9999
-for timeline in successful_sequences_found:
-    cost = sum(spell_book[spell].cost for spell in timeline if spell)
-    if cost and cost <= ans:
-        ans = cost
+ans = min(state.total_mana_spent for state in win_states)
 print(ans)
