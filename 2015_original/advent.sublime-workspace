@@ -1,0 +1,935 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"short",
+				"shortest_path"
+			],
+			[
+				"profil",
+				"profiled_execution"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"array",
+				"array_filter"
+			],
+			[
+				"json",
+				"json_encode"
+			],
+			[
+				"data",
+				"data-expense-id"
+			],
+			[
+				"url",
+				"urlencode"
+			],
+			[
+				"border",
+				"border-radius"
+			],
+			[
+				"b",
+				"border-radius"
+			],
+			[
+				"pddi",
+				"padding-top"
+			],
+			[
+				"pad",
+				"padding-left"
+			],
+			[
+				"paddin",
+				"padding-top"
+			],
+			[
+				"create",
+				"createElement"
+			],
+			[
+				"Con",
+				"ContactItem"
+			],
+			[
+				"Conta",
+				"ContactForm"
+			],
+			[
+				"guess",
+				"guess_single_cipher"
+			],
+			[
+				"poss",
+				"possible_ciphers"
+			],
+			[
+				"bytes",
+				"bytestring"
+			],
+			[
+				"encry",
+				"encrypted_as_bytes"
+			],
+			[
+				"PLAYER_",
+				"PLAYER_JUMPING"
+			],
+			[
+				"PLAYER",
+				"PLAYER_JUMPING"
+			],
+			[
+				"get",
+				"getElementById"
+			],
+			[
+				"Create",
+				"createElement"
+			],
+			[
+				"bak",
+				"background-color"
+			],
+			[
+				"PADDLE",
+				"PADDLE_HEIGHT"
+			],
+			[
+				"PADD",
+				"PADDLE_WIDTH"
+			],
+			[
+				"ext",
+				"extract_spheres"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "challenge_25.py",
+			"settings":
+			{
+				"buffer_size": 446,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"7in7 (Erlang)",
+					""
+				],
+				[
+					"7in7 (Io)",
+					""
+				],
+				[
+					"7in7 (Prolog)",
+					""
+				],
+				[
+					"7in7 (Scala)",
+					""
+				]
+			],
+			[
+				"7in7 (Erlang)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"7in7 (Erlang)",
+					""
+				],
+				[
+					"7in7 (Io)",
+					""
+				],
+				[
+					"7in7 (Prolog)",
+					""
+				],
+				[
+					"7in7 (Scala)",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"7in7 (Io)",
+					""
+				],
+				[
+					"7in7 (Prolog)",
+					""
+				]
+			],
+			[
+				"7in7 (Prolog)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"7in7 (Io)",
+					""
+				],
+				[
+					"7in7 (Prolog)",
+					""
+				],
+				[
+					"7in7 (Scala)",
+					""
+				]
+			],
+			[
+				"7in7 (Scala)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"7in7 (Io)",
+					""
+				],
+				[
+					"7in7 (Prolog)",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"7in7 (Ruby)",
+					""
+				],
+				[
+					"7in7 (io)",
+					""
+				],
+				[
+					"Packages/Ruby/Ruby.sublime-build",
+					""
+				]
+			],
+			[
+				"7in7 (Ruby)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Euler (C)",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Euler (C)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Euler (Haskell)",
+					""
+				],
+				[
+					"Packages/Haskell/Haskell.sublime-build",
+					""
+				]
+			],
+			[
+				"Euler (Haskell)",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Euler (Python)",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				"Run"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/User/JavaScript.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/JavaScript.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Python Auto-Profile",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Python Auto-Profile",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 87.0,
+		"last_filter": "install ",
+		"selected_items":
+		[
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"pencil",
+				"Preferences: Settings - Default"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 167.0,
+		"history":
+		[
+			"dir(window.sheets()[1].view)",
+			"dir(window.sheets()[1].window)",
+			"dir(window.sheets()[1])",
+			"window.sheets()[1]",
+			"window.sheets()",
+			"window.sheets",
+			"dir(window)",
+			"window",
+			"print([t for t in dir(window) if 'selector' in t])",
+			"print([t for t in dir(window)])",
+			"dir(window)",
+			"window",
+			"locals()",
+			"selector",
+			"locals()",
+			"env",
+			"echo dog"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/roderic/Developer/advent"
+	],
+	"file_history":
+	[
+		"/Users/roderic/Developer/advent/lol.py",
+		"/Users/roderic/Developer/advent/challenge_24.py",
+		"/Users/roderic/Developer/advent/challenge_23.py",
+		"/Users/roderic/Developer/advent/challenge_22.py",
+		"/Users/roderic/Developer/advent/challenge_23.txt",
+		"/Users/roderic/Developer/advent/challenge_23_test.txt",
+		"/Users/roderic/Developer/advent/challenge_21.py",
+		"/Users/roderic/Developer/advent/challenge_21_cheat.py",
+		"/Users/roderic/Developer/advent/challenge_21_test.txt",
+		"/Users/roderic/Developer/advent/challenge_21.txt",
+		"/Users/roderic/Developer/advent/challenge_20.py",
+		"/Users/roderic/Developer/advent/advent.sublime-project",
+		"/Users/roderic/Developer/advent/challenge_20_cheat.py",
+		"/Users/roderic/Developer/advent/challenge_20_test.txt",
+		"/Users/roderic/Developer/advent/challenge_20.txt",
+		"/Users/roderic/Developer/advent/challenge_19.py",
+		"/Users/roderic/Developer/advent/challenge_19.txt",
+		"/Users/roderic/Developer/advent/challenge_19_test.txt",
+		"/Users/roderic/Developer/advent/challenge_19.test",
+		"/Users/roderic/Developer/advent/challenge_17.py",
+		"/Users/roderic/Developer/advent/challenge_18.py",
+		"/Users/roderic/Developer/advent/challenge_18.txt",
+		"/Users/roderic/Developer/advent/challenge_17.txt",
+		"/Users/roderic/Developer/advent/challenge_16.py",
+		"/Users/roderic/Developer/advent/challenge_16.txt",
+		"/Users/roderic/Developer/fairshare/index.html",
+		"/Users/roderic/Developer/advent/challenge_15.py",
+		"/Users/roderic/Developer/advent/challenge_15.txt",
+		"/Users/roderic/Developer/euler/python3/Euler.py",
+		"/Users/roderic/Developer/advent/challenge_14.py",
+		"/Users/roderic/Developer/advent/challenge_14.txt",
+		"/Users/roderic/Developer/advent/challenge_13.py",
+		"/Users/roderic/Developer/advent/challenge_13.txt",
+		"/Users/roderic/Developer/advent/challenge_12.py",
+		"/Users/roderic/Developer/advent/challenge_12.txt",
+		"/Users/roderic/Developer/advent/challenge_11.py",
+		"/Users/roderic/Developer/advent/challenge_11_colin.py",
+		"/Users/roderic/Developer/advent/challenge_11.txt",
+		"/Users/roderic/Developer/advent/challenge_10.py",
+		"/Users/roderic/Developer/carouault.github.io/challenge_10.txt",
+		"/Users/roderic/Developer/advent/challenge_09.txt",
+		"/Users/roderic/Desktop/learn.r",
+		"/Users/roderic/Developer/7in7/Erlang/echo.erl",
+		"/Users/roderic/Developer/7in7/.gitignore",
+		"/Users/roderic/Developer/7in7/Erlang/translate.erl",
+		"/Users/roderic/Developer/7in7/Erlang/do2b.erl",
+		"/Users/roderic/Developer/7in7/Erlang/do2.erl",
+		"/Users/roderic/Developer/7in7/Erlang/ex2-controlflow.erl",
+		"/Users/roderic/Developer/7in7/Erlang/ex2b-listcomp.erl",
+		"/Users/roderic/Desktop/test.py",
+		"/Users/roderic/Developer/7in7/Erlang/do1.erl",
+		"/Users/roderic/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/roderic/Developer/7in7/Prolog/ex2-cuts.pl",
+		"/Users/roderic/Developer/7in7/Prolog/fish.pl",
+		"/Users/roderic/Developer/7in7/Prolog/bobo.pl",
+		"/Users/roderic/Developer/7in7/Prolog/fish-eazar.pl",
+		"/Users/roderic/Developer/7in7/Erlang/ex1-scripting.erl",
+		"/Users/roderic/Developer/7in7/7in7.sublime-project",
+		"/Users/roderic/Developer/7in7/Scala/../Erlang/ex1.erl",
+		"/Users/roderic/Developer/7in7/Scala/readme.md",
+		"/Users/roderic/Developer/7in7/Scala/do3-concurrency.scala",
+		"/Users/roderic/Developer/7in7/Scala/ex3b-concurrency.scala",
+		"/Users/roderic/Developer/7in7/Scala/do3-dumb.scala",
+		"/Users/roderic/Developer/7in7/Scala/ex3a-xml-and-regex.scala",
+		"/Users/roderic/Developer/7in7/Scala/ex3c-factorial-client.scala",
+		"/Users/roderic/Developer/7in7/docs/Io Programming Guide.html",
+		"/Users/roderic/Developer/7in7/Scala/ex3c.scala",
+		"/Users/roderic/Developer/7in7/Scala/do2-censor-trait.scala",
+		"/Users/roderic/Developer/7in7/Scala/ex3.scala",
+		"/Users/roderic/Developer/7in7/Scala/do2.scala",
+		"/Users/roderic/Developer/7in7/Scala/do2-script.txt",
+		"/Users/roderic/Developer/7in7/Scala/do2.txt",
+		"/Users/roderic/Developer/7in7/Scala/curses.txt",
+		"/Users/roderic/Developer/7in7/Scala/do1-tic-tac-toe.scala",
+		"/Users/roderic/Developer/7in7/Scala/temp.sc",
+		"/Users/roderic/Developer/7in7/Scala/ttt.txt",
+		"/Users/roderic/Developer/7in7/Scala/xxx",
+		"/Users/roderic/Developer/7in7/Scala/ex1.scala",
+		"/Users/roderic/Developer/7in7/Prolog/lessons-prolog.md",
+		"/Users/roderic/Developer/7in7/Prolog/do3a.pl",
+		"/Users/roderic/Developer/7in7/Prolog/do2a.pl",
+		"/Users/roderic/Developer/7in7/Prolog/ex2.pl",
+		"/Users/roderic/Developer/7in7/Prolog/ex1.pl",
+		"/Users/roderic/Desktop/fluke.py",
+		"/Users/roderic/Developer/7in7/Prolog/do2.pl",
+		"/Users/roderic/Developer/7in7/Prolog/common.pl",
+		"/Users/roderic/Developer/7in7/Prolog/template.pl",
+		"/Users/roderic/Developer/7in7/Prolog/factorial.pl",
+		"/Users/roderic/Downloads/subtitles.py",
+		"/Users/roderic/Desktop/p1_01.pl",
+		"/Users/roderic/Developer/7in7/Prolog/friends.pl",
+		"/Users/roderic/Desktop/yolo.py",
+		"/Users/roderic/Developer/7in7/Io/../Prolog/ex1.pl",
+		"/Users/roderic/Developer/7in7/Io/do3c__.io",
+		"/Users/roderic/Developer/7in7/Io/do3a.io",
+		"/Users/roderic/Developer/7in7/Io/Builder.io",
+		"/Users/roderic/Developer/7in7/Io/do3c_.io",
+		"/Users/roderic/Developer/7in7/Io/do2efg.io",
+		"/Users/roderic/Developer/7in7/Io/do3c.io",
+		"/Users/roderic/Developer/7in7/Io/do3c_operators.io",
+		"/Users/roderic/Developer/7in7/Io/_.io",
+		"/Users/roderic/Developer/7in7/Io/shuffle.io",
+		"/Users/roderic/Developer/7in7/Io/operators.io",
+		"/Users/roderic/Developer/7in7/Io/phonebook.txt",
+		"/Users/roderic/Developer/7in7/Io/lol.io",
+		"/Users/roderic/Developer/7in7/Io/do3b.io",
+		"/Users/roderic/Developer/7in7/Io/do3.io",
+		"/Users/roderic/Developer/7in7/Io/ex3a.io",
+		"/Users/roderic/Developer/7in7/Io/ex2efg.io",
+		"/Users/roderic/Developer/7in7/Io/new_matrix.txt",
+		"/Users/roderic/Developer/7in7/Io/matrix.txt",
+		"/Users/roderic/Developer/7in7/Io/ex2h.io",
+		"/Users/roderic/Developer/7in7/Io/ex2e.io",
+		"/Users/roderic/Developer/7in7/Io/ex3c.io",
+		"/Users/roderic/Developer/7in7/Io/ex2c.io",
+		"/Users/roderic/Developer/7in7/Io/ex2b.io",
+		"/Users/roderic/Developer/7in7/Io/ex2a.io",
+		"/Users/roderic/Developer/7in7/Io/do1.io",
+		"/Users/roderic/Developer/7in7/Ruby/ex1.rb",
+		"/Users/roderic/Developer/7in7/Io/02a.io",
+		"/Users/roderic/Developer/7in7/Io/01.io",
+		"/Users/roderic/Developer/7in7/Io/day1.io",
+		"/Users/roderic/Developer/euler/euler.sublime-project",
+		"/Users/roderic/Developer/7in7/Io/hey.io",
+		"/Users/roderic/Developer/euler/python3/problem00066_diophantine.py",
+		"/Users/roderic/Developer/euler/python3/problem00064_oddperiodsqrt.py",
+		"/Users/roderic/Developer/euler/python3/problem00057_sqrtconvergents.py",
+		"/Users/roderic/Developer/euler/python3/problem00065_convergentse.py"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 99.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"minlen",
+			"minimal",
+			"tuple",
+			"sets",
+			"values",
+			"combo",
+			"make_change",
+			"options",
+			"materials",
+			"offset",
+			"line",
+			"text",
+			"target",
+			"partitions",
+			"turns",
+			"spell_chains",
+			"new_total",
+			"total",
+			"effects",
+			"also_new",
+			"new",
+			"math.",
+			"input",
+			"boss",
+			"l",
+			"next",
+			"sumemd",
+			"append",
+			"i",
+			"boil_on",
+			"replace_one",
+			"Ti",
+			"explore",
+			"process",
+			"Rn",
+			"C",
+			"count",
+			"molecule",
+			"source",
+			"molecule",
+			"constituents",
+			"source",
+			"molecule",
+			"old",
+			"string",
+			"molecule",
+			"valid",
+			"process",
+			"seen",
+			"tree",
+			"process",
+			"source",
+			"print",
+			"copy",
+			"string",
+			"copy",
+			"text",
+			"sides",
+			"sizes",
+			":",
+			"collections",
+			"product",
+			"thing",
+			"g",
+			"reindeers",
+			"time",
+			"combo",
+			"mapping",
+			"permutation",
+			"string",
+			"places",
+			"min",
+			"graph",
+			"list",
+			"s",
+			"==",
+			"String",
+			"Outcome",
+			"Trip",
+			"getValue",
+			"Price",
+			"Negate",
+			"X",
+			"func",
+			"out",
+			"nwords",
+			"memb_or_call",
+			"L",
+			"   (",
+			"House",
+			"hey",
+			"J",
+			"house",
+			"(_",
+			"(",
+			"member",
+			"fac",
+			"10",
+			"url",
+			"factorial",
+			"String",
+			"link",
+			"_",
+			"stepOne",
+			"short",
+			"movie",
+			"censoredScript",
+			"CensoredScript",
+			"censoredScript",
+			"CensoredScript",
+			"map",
+			"script",
+			"fromFile",
+			"pair",
+			"lines",
+			"()",
+			"text",
+			"map",
+			"trans",
+			"text",
+			"heh",
+			"Bond",
+			"Day",
+			"James",
+			"Harold",
+			"Beans",
+			"Pucky",
+			"Darn"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "challenge_25.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 446,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								414,
+								414
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 37.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 302.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "advent.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"classes/MasterCardTransfer.php"
+			],
+			[
+				"exp",
+				"classes/Data/Model/Expense.php"
+			],
+			[
+				"new",
+				"new-expenses.php"
+			],
+			[
+				"process",
+				"process-expense.php"
+			],
+			[
+				"data.php",
+				"classes/Data/Data.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Developer/7in7/7in7.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 47.0,
+		"last_filter": "pencil",
+		"selected_items":
+		[
+			[
+				"pencil",
+				"Pencil"
+			]
+		],
+		"width": 392.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 217.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

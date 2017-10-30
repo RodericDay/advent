@@ -1,15 +1,12 @@
 import itertools
 import hashlib
 
-key = 'yzbqklnj'
+salt = 'yzbqklnj'
 
 for n in itertools.count():
-    seed = '{}{}'.format(key, n).encode()
-    md5 = hashlib.md5()
-    md5.update(seed)
-    string = ''.join('{:0>2x}'.format(c) for c in md5.digest())
-    if string.startswith('00000'):
-        print(n, string)
-    if string.startswith('000000'):
-        print(n, string)
+    seed = '{}{}'.format(salt, n).encode()
+    digest = hashlib.md5(seed).hexdigest()
+    if digest.startswith('00000'):
+        print(n, digest)
+    if digest.startswith('000000'):
         break

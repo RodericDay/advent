@@ -1,25 +1,25 @@
 import re, collections
 
-instructions = []
+d = {
+    'or': '^',
+    'and': '&',
+    'not': '~',
+    'rshift': '>>',
+    'lshift': '<<',
+}
+
 with open('07.txt') as fp:
-    for line in (fp.read().strip()
-            .replace('RSHIFT', '>>')
-            .replace('LSHIFT', '<<')
-            .replace('AND', '&')
-            .replace('OR', '^')
-            .replace('NOT', '~')
-            # .replace('1674 -> b', '46065 -> b')
-            .swapcase()
-            .split('\n')
-        ):
-        instructions.append(re.sub(r'(.+) -> (.+)', r'\2 = \1', line))
+    code = fp.read()
 
-while instructions:
-    current, *instructions = instructions
+_ = code.swapcase()
+_ = re.sub(r'(.+) -> (.+)', r'\2 = \1', _)
+_ = re.sub(r'[a-z]+', lambda m: d[m.group(0)], _)
+instruction = collections.deque(_.splitlines())
+
+while instruction:
     try:
-        exec(current)
-        print(current)
+        exec(instruction[-1])
+        instruction.pop()
     except NameError:
-        instructions.append(current)
-
+        instruction.rotate(1)
 print(A)

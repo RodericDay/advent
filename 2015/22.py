@@ -95,34 +95,32 @@ class Game:
     def check_sequence(self, sequence):
         state = self.copy()
         try:
-            for spell in (action for spell in sequence for action in [spell, None]):
-                state = state.resolve_turn(spell)
+            for spell in sequence:
+                for action in [spell, None]:
+                    state = state.resolve_turn(action)
         except Game.WinEvent:
             return True
 
 
-win_states = []
-def breadth_first_search(valid_states):
-    ''' consider only valid branches, keep track of successful ones '''
-    for state in valid_states:
-        for spell in (spell_book if state.is_player_turn else [None]):
-            try:
-                yield state.resolve_turn(spell)
-            except Game.WinEvent as event:
-                win_states.append(event.state)
-            except (Game.LoseEvent, Game.InvalidEvent):
-                pass
+def breadth_first_search(states, lim=20):
+    win_states = []
+    for i in range(lim):
+        states, old_states = [], states
+        for state in old_states:
+            for spell in (spell_book if state.is_player_turn else [None]):
+                try:
+                    states += [state.resolve_turn(spell)]
+                except Game.WinEvent as event:
+                    win_states += [event.state]
+                except (Game.LoseEvent, Game.InvalidEvent):
+                    pass
+    return win_states
 
 
-# tests
 assert Game(10, 250, 13, 8).check_sequence(['Poison', 'Magic Missile'])
-assert Game(10, 250, 14, 8).check_sequence(['Recharge','Shield','Drain','Poison','Magic Missile'])
+assert Game(10, 250, 14, 8).check_sequence(
+                        ['Recharge','Shield','Drain','Poison','Magic Missile'])
 
-
-valid_states = [Game(50, 500, 51, 9, hard_mode=True)]
-for n in range(16):  # how many turns in
-    valid_states = list(breadth_first_search(valid_states))
-
-
+win_states = breadth_first_search([Game(50, 500, 51, 9, hard_mode=True)], lim=16)
 ans = min(state.total_mana_spent for state in win_states)
 print(ans)
