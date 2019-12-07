@@ -1,3 +1,4 @@
+import itertools
 import re
 
 
@@ -19,9 +20,11 @@ def get_parameters(ns, pos, modes, N, writes):
     yield pos + N
 
 
-def compute(ns, inp):
+def compute(ns, in_iter):
     if isinstance(ns, str):
         ns = parse(ns)
+    if isinstance(in_iter, int):
+        in_iter = itertools.cycle([in_iter])
 
     pos = 0
     consume = lambda n, writes='': get_parameters(ns, pos, modes, n, writes)
@@ -43,7 +46,7 @@ def compute(ns, inp):
 
         elif op == 3:
             a, pos = consume(1, 'a')
-            ns[a] = inp
+            ns[a] = next(in_iter)
 
         elif op == 4:
             a, pos = consume(1)
