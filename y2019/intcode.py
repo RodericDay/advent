@@ -1,20 +1,26 @@
+import collections
 import itertools
 import re
 
 
 def parse(string):
-    return [int(n) for n in re.findall(r'-?\d+', string)]
+    memory = collections.defaultdict(int)
+    memory.update(enumerate(int(n) for n in re.findall(r'-?\d+', string)))
+    return dict(memory)
 
 
-def get_parameters(ns, pos, modes, N, writes):
+def get_parameters(ns, pos, modes, N, writes, relbase):
     for c in writes:
         # paradox: return immediate mode to use positionally outside
-        modes[ord(c) - ord('a')] = '1'
+        modes[ord(c) - ord('a')] += '-special'
 
-    for mode, x in zip(modes, ns[pos:][:N]):
+    for mode, x in zip(modes, [ns[y] for y in range(pos, pos + N)]):
         yield {
             '0': lambda: ns[x],
             '1': lambda: x,
+            '2': lambda: ns[x + relbase],
+            '0-special': lambda: x,
+            '2-special': lambda: x + relbase,
         }[mode]()
 
     yield pos + N
@@ -27,7 +33,8 @@ def compute(ns, in_iter):
         in_iter = itertools.cycle([in_iter])
 
     pos = 0
-    consume = lambda n, writes='': get_parameters(ns, pos, modes, n, writes)
+    relbase = 0
+    consume = lambda n, writes='': get_parameters(ns, pos, modes, n, writes, relbase)
 
     while True:
         op = ns[pos] % 100
@@ -69,6 +76,10 @@ def compute(ns, in_iter):
         elif op == 8:
             a, b, c, pos = consume(3, 'c')
             ns[c] = int(a == b)
+
+        elif op == 9:
+            a, pos = consume(1)
+            relbase += a
 
         elif op == 99:
             return

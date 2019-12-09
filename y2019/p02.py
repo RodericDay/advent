@@ -6,7 +6,8 @@ from intcode import compute, parse
 
 def check(noun, verb):
     ns = parse(text)
-    ns[1:3] = [noun, verb]
+    ns[1] = noun
+    ns[2] = verb
     list(compute(ns, 2))
     return ns[0]
 
