@@ -4,9 +4,10 @@ import re
 
 
 def parse(string):
+    ns = [int(n) for n in re.findall(r'-?\d+', string)]
     memory = collections.defaultdict(int)
-    memory.update(enumerate(int(n) for n in re.findall(r'-?\d+', string)))
-    return dict(memory)
+    memory.update(enumerate(ns))
+    return memory
 
 
 def get_parameters(ns, pos, modes, N, writes, relbase):
