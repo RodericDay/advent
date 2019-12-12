@@ -3,6 +3,7 @@ DATA = $(shell echo $(FILE) | sed -e s/\.py/\.dat/)
 PYTHONPATH=.
 
 main: venv/
+# 	@venv/bin/flake8 --exclude=venv/
 	@touch $(DATA)
 	@cat $(DATA) | venv/bin/python -u $(FILE)
 

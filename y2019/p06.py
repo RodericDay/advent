@@ -1,5 +1,5 @@
-import sys
 import collections
+import sys
 
 
 # build

@@ -1,7 +1,7 @@
-import re
 import sys
 
 from intcode import compute
+
 
 text = sys.stdin.read()
 print(next(compute(text, 1)))

@@ -1,7 +1,6 @@
 import itertools
 import math
 import sys
-from functools import partial
 
 
 def measure(start, other):

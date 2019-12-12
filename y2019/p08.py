@@ -4,7 +4,7 @@ import sys
 w, h = 25, 6
 text = sys.stdin.read()
 
-count = lambda m: lambda layer: sum(n == m for n in layer)
+count = lambda m: lambda layer: sum(n == m for n in layer)  # noqa
 
 layers = list(zip(*[(int(n) for n in text.strip())] * w * h))
 min_layer = min(layers, key=count(0))

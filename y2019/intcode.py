@@ -28,6 +28,9 @@ def get_parameters(ns, pos, modes, N, writes, relbase):
 
 
 def compute(ns, in_iter):
+    def consume(N, writes=''):
+        return get_parameters(ns, pos, modes, N, writes, relbase)
+
     if isinstance(ns, str):
         ns = parse(ns)
     if isinstance(in_iter, int):
@@ -35,7 +38,6 @@ def compute(ns, in_iter):
 
     pos = 0
     relbase = 0
-    consume = lambda n, writes='': get_parameters(ns, pos, modes, n, writes, relbase)
 
     while True:
         op = ns[pos] % 100

@@ -1,5 +1,6 @@
 import sys
-from intcode import compute, parse
+
+from intcode import compute
 
 
 tests = [

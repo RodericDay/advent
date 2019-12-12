@@ -1,6 +1,6 @@
 import itertools
-import re
 import sys
+
 from intcode import compute, parse
 
 
@@ -16,4 +16,4 @@ text = sys.stdin.read()
 print(check(12, 2))
 for noun, verb in itertools.product(range(100), repeat=2):
     if check(noun, verb) == 19690720:
-        print(100 * noun +  verb)
+        print(100 * noun + verb)

@@ -1,5 +1,6 @@
 import collections
 import sys
+
 from intcode import compute
 
 

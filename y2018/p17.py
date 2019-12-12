@@ -10,7 +10,7 @@ def read_in():
         _ = re.sub(r'(\d+)\.\.(\d+)', r'range(\1, \2 + 1)', _)
         _ = re.sub(r'=(\d+)', r'=[\1]', _)
         exec(_, globals())
-        grid.update({(X, Y): '#' for X in x for Y in y})
+        grid.update({(X, Y): '#' for X in x for Y in y})  # noqa
     return grid
 
 
@@ -49,7 +49,8 @@ def drain(end):
         x, y = stack.pop()
         grid[x, y] = '|'
 
-        if grid[x - 1, y] == '|' and grid[x + 1, y] == ' ' and grid[x, y + 1] != '|':
+        left, right, below = grid[x - 1, y], grid[x + 1, y], grid[x, y + 1]
+        if all([right == ' ', left == '|', below != '|']):
             flow((x + 1, y))
 
         for dx, dy in [(-1, 0), (1, 0), (0, -1)]:
