@@ -1,11 +1,11 @@
 import collections
 import re
-from pathlib import Path
+import sys
 
 
 def read_in():
     grid = collections.defaultdict(lambda: ' ')
-    for _ in Path('y2018/p17.dat').read_text().splitlines():
+    for _ in sys.stdin.read().splitlines():
         _ = _.replace(',', ';')
         _ = re.sub(r'(\d+)\.\.(\d+)', r'range(\1, \2 + 1)', _)
         _ = re.sub(r'=(\d+)', r'=[\1]', _)
@@ -15,20 +15,23 @@ def read_in():
 
 
 def write_out(grid, path):
+    xmin, *_, xmax = sorted(x for x, y in grid)
+    ymin, *_, ymax = sorted(y for x, y in grid)
     text = '\n'.join(
         ''.join(grid[x, y] for x in range(xmin - 5, xmax + 5))
         for y in range(ymin, ymax + 1)
     )
-    Path(path).write_text(text)
+    with open('p17out.dat', 'w') as fp:
+        fp.write(text)
 
 
-def flow(start):
+def flow(grid, start, ymax):
     stack = [start]
     while stack:
         x, y = stack.pop()
         grid[x, y] = '~'
 
-        if y > ymax:
+        if y >= ymax:
             break
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1)]:
@@ -40,10 +43,10 @@ def flow(start):
             if grid[new] == ' ':
                 stack.append(new)
 
-    drain((x, y))
+    drain(grid, (x, y), ymax)
 
 
-def drain(end):
+def drain(grid, end, ymax):
     stack = [end]
     while stack:
         x, y = stack.pop()
@@ -51,7 +54,7 @@ def drain(end):
 
         left, right, below = grid[x - 1, y], grid[x + 1, y], grid[x, y + 1]
         if all([right == ' ', left == '|', below != '|']):
-            flow((x + 1, y))
+            flow(grid, (x + 1, y), ymax)
 
         for dx, dy in [(-1, 0), (1, 0), (0, -1)]:
             new = x + dx, y + dy
@@ -60,9 +63,8 @@ def drain(end):
 
 
 grid = read_in()
-xmin, *_, xmax = sorted(x for x, y in grid)
-ymin, *_, ymax = sorted(y for x, y in grid)
-flow((500, 0))
+ymin, *_, ymax = sorted(y for x, y in grid if grid[x, y] == '#')
+flow(grid, (500, ymin), ymax)
 counter = collections.Counter(grid.values())
 print(counter['~'] + counter['|'])
 print(counter['~'])
