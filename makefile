@@ -3,7 +3,6 @@ DATA = $(shell echo $(FILE) | sed -e s/\.py/\.dat/)
 PYTHONPATH=.
 
 main: venv/
-# 	@venv/bin/flake8 --exclude=venv/
 	@touch $(DATA)
 	@cat $(DATA) | venv/bin/python -u $(FILE)
 
@@ -12,3 +11,6 @@ venv/: requirements.txt
 	python3 -m venv venv
 	venv/bin/pip install -r requirements.txt
 	touch requirements.txt venv/
+	# install flake8 git hook
+	echo 'venv/bin/flake8 --exclude=venv/' > .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
