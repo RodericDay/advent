@@ -18,16 +18,9 @@ print(max(solve(ns, phases) for phases in permutations(range(5))))
 
 
 def solve2(ns, phases):
-    feedback = []
-    iter_phases = iter(phases)
+    feedback = [0]
     iter_feed = iter(feedback)
-    loop = cycle([
-        compute(ns, chain([next(iter_phases), 0], iter_feed)),
-        compute(ns, chain([next(iter_phases)], iter_feed)),
-        compute(ns, chain([next(iter_phases)], iter_feed)),
-        compute(ns, chain([next(iter_phases)], iter_feed)),
-        compute(ns, chain([next(iter_phases)], iter_feed)),
-    ])
+    loop = cycle(compute(ns, chain([phase], iter_feed)) for phase in phases)
     try:
         for machine in loop:
             feedback.append(next(machine))

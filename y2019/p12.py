@@ -46,6 +46,5 @@ print(energy)
 nX, _ = simulate(text, axes=slice(0, 1))
 nY, _ = simulate(text, axes=slice(1, 2))
 nZ, _ = simulate(text, axes=slice(2, 3))
-gcds = {gcd(p, q) for p, q in itertools.combinations([nX, nY, nZ], 2)}
-lcm = functools.reduce(int.__mul__, gcds)
-print(nX * nY * nZ // lcm)
+lcm = functools.reduce(lambda a, b: a * b // gcd(a, b), [nX, nY, nZ])
+print(lcm)
