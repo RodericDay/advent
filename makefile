@@ -1,6 +1,7 @@
-FILE = $(shell find . -name p??.py -type f | xargs ls -rt | tail -n 1)
+FILE = $(shell find . -path "./y????/p??.py" -type f | xargs ls -rt | tail -n 1)
 DATA = $(shell echo $(FILE) | sed -e s/\.py/\.dat/)
-PYTHONPATH=.
+PYTHONPATH = .
+export
 
 main: venv/
 	@touch $(DATA)

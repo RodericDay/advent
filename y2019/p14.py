@@ -5,29 +5,29 @@ import sys
 
 
 text = sys.stdin.read()
-to_get = {}
+cookbook = {}
 for line in text.strip().splitlines():
     for i, (qty, name) in enumerate(re.findall(r'(\d+) ([A-Z]+)', line)[::-1]):
         if i == 0:
             output = name
-            to_get[output] = {output: -int(qty)}
+            cookbook[output] = {output: -int(qty)}
         else:
-            to_get[output][name] = int(qty)
+            cookbook[output][name] = int(qty)
 
 
-def fuel_to_ore(wanted):
-    required = collections.Counter({'FUEL': wanted})
-    pending = required.copy()
+def fuel_to_ore(state):
+    state = collections.Counter(state)
+    pending = state.copy()
     while pending:
-        pending = {k: v for k, v in required.items() if k != 'ORE' and v > 0}
+        pending = {k: v for k, v in state.items() if k in cookbook and v > 0}
         for out, out_qty in pending.items():
-            min_qty = -to_get[out][out]
+            min_qty = -cookbook[out][out]
             n_times = math.ceil(out_qty / min_qty)
-            required.update({k: v * n_times for k, v in to_get[out].items()})
-    return required['ORE']
+            state.update({k: v * n_times for k, v in cookbook[out].items()})
+    return state
 
 
-print(fuel_to_ore(1))
+print(fuel_to_ore({'FUEL': 1})['ORE'])
 
 
 def bsearch(fn, goal, lo, hi):
@@ -46,4 +46,4 @@ def bsearch(fn, goal, lo, hi):
     return lo
 
 
-print(bsearch(fuel_to_ore, 1E12, 1, 10_000_000))
+print(bsearch(lambda n: fuel_to_ore({'FUEL': n})['ORE'], 1E12, 1, 10_000_000))

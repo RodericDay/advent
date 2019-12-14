@@ -9,20 +9,10 @@ def read_in():
         _ = _.replace(',', ';')
         _ = re.sub(r'(\d+)\.\.(\d+)', r'range(\1, \2 + 1)', _)
         _ = re.sub(r'=(\d+)', r'=[\1]', _)
-        exec(_, globals())
-        grid.update({(X, Y): '#' for X in x for Y in y})  # noqa
+        temp = {}
+        exec(_, temp)
+        grid.update({(X, Y): '#' for X in temp['x'] for Y in temp['y']})
     return grid
-
-
-def write_out(grid, path):
-    xmin, *_, xmax = sorted(x for x, y in grid)
-    ymin, *_, ymax = sorted(y for x, y in grid)
-    text = '\n'.join(
-        ''.join(grid[x, y] for x in range(xmin - 5, xmax + 5))
-        for y in range(ymin, ymax + 1)
-    )
-    with open('p17out.dat', 'w') as fp:
-        fp.write(text)
 
 
 def flow(grid, start, ymax):
@@ -68,4 +58,3 @@ flow(grid, (500, ymin), ymax)
 counter = collections.Counter(grid.values())
 print(counter['~'] + counter['|'])
 print(counter['~'])
-write_out(grid, 'y2018/p17out.dat')

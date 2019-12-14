@@ -1,7 +1,7 @@
 import collections
 import sys
 
-from intcode import compute
+from intcode import compute, parse
 
 
 def arkanoid(text):
@@ -31,5 +31,7 @@ text = sys.stdin.read()
 grid, _ = arkanoid(text)
 print(collections.Counter(grid.values())[2])
 
-_, score = arkanoid('2' + text[1:])
+ns = parse(text)
+ns[0] = 2
+_, score = arkanoid(ns)
 print(score)
