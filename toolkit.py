@@ -10,3 +10,19 @@ def render(grid, brush):
             rendered += brush[grid.get(complex(x, y))]
         rendered += '\n'
     return rendered
+
+
+def bsearch(fn, goal, lo, hi):
+    while hi - lo > 1:
+        mid = lo + (hi - lo) // 2
+        if goal < fn(mid):
+            lo, hi = lo, mid
+        else:
+            lo, hi = mid, hi
+
+    # check
+    a, b = fn(lo), fn(hi)
+    assert a <= goal, 'lower bound too high'
+    assert goal <= b, 'higher bound too low'
+
+    return lo
