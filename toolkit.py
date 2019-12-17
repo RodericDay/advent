@@ -1,3 +1,6 @@
+import collections
+
+
 def render(grid, brush):
     if isinstance(brush, str):
         brush = {i: c for i, c in enumerate(brush)}
@@ -26,3 +29,11 @@ def bsearch(fn, goal, lo, hi):
     assert goal <= b, 'higher bound too low'
 
     return lo
+
+
+def read_image(text):
+    grid = collections.defaultdict(str)
+    for y, line in enumerate(text.splitlines()):
+        for x, cell in enumerate(line):
+            grid[complex(x, y)] = cell
+    return grid
