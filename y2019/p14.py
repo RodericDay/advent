@@ -3,8 +3,6 @@ import math
 import re
 import sys
 
-from toolkit import bsearch
-
 
 text = sys.stdin.read()
 cookbook = {}
@@ -27,6 +25,22 @@ def fuel_to_ore(state):
             n_times = math.ceil(out_qty / min_qty)
             state.update({k: v * n_times for k, v in cookbook[out].items()})
     return state
+
+
+def bsearch(fn, goal, lo, hi):
+    while hi - lo > 1:
+        mid = lo + (hi - lo) // 2
+        if goal < fn(mid):
+            lo, hi = lo, mid
+        else:
+            lo, hi = mid, hi
+
+    # check
+    a, b = fn(lo), fn(hi)
+    assert a <= goal, 'lower bound too high'
+    assert goal <= b, 'higher bound too low'
+
+    return lo
 
 
 print(fuel_to_ore({'FUEL': 1})['ORE'])
