@@ -28,7 +28,7 @@ def read_image(text):
 def shortest_path(start, end, move):
     seen = {}
     edge = {start: None}
-    while end not in seen:
+    while edge:
         seen.update(edge)
         edge = {
             adj: pos
@@ -36,8 +36,10 @@ def shortest_path(start, end, move):
             for adj in move(pos)
             if adj not in seen
         }
-        if not edge:
-            raise RuntimeError('Path not found', seen)
+        if end in seen:
+            break
+    else:
+        raise RuntimeError('Path not found', seen)
     path = []
     while end:
         path.append(end)
