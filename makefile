@@ -9,7 +9,7 @@ main: venv/
 
 venv/: requirements.txt
 	rm -rf venv/
-	python3 -m venv venv
+	~/.pyenv/versions/3.8.0/bin/python -m venv venv
 	venv/bin/pip install -r requirements.txt
 	touch requirements.txt venv/
 	# install flake8 git hook
