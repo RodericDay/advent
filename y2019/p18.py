@@ -10,7 +10,7 @@ def read_in(text):
     grid = read_image(text)
     elements = {v: k for k, v in grid.items()}
     keys = {c for c in elements if c.isalpha() and c.islower()}
-    return dict(grid), elements, keys
+    return grid, elements, keys
 
 
 def move(grid, pos):
@@ -23,25 +23,23 @@ def trim(states, metric):
     groups = collections.defaultdict(list)
     for state in states:
         tips = frozenset(seq[-1] for seq in state)
-        bulk = frozenset(' '.join(state))
+        bulk = frozenset(''.join(state))
         groups[bulk, tips].append(state)
     return [min(groups[k], key=metric) for k in groups]
 
 
 def precalc_moves(entrances, keys, elements, grid):
-    requirements = collections.defaultdict(dict)
+    reqs = collections.defaultdict(dict)
     lengths = {}
     for a, b in itertools.combinations(keys.union(entrances), 2):
         try:
             path = shortest_path(elements[a], elements[b], partial(move, grid))
-            *glyphs, = map(grid.get, path)
+            lengths[a, b] = lengths[b, a] = len(path) - 1
+            doors = {c for c in map(grid.get, path) if c.isupper()}
+            reqs[a][b] = reqs[b][a] = {d.lower() for d in doors}
         except RuntimeError:
             continue
-        lengths[a, b] = len(path) - 1
-        lengths[b, a] = len(path) - 1
-        requirements[a][b] = {c.lower() for c in glyphs if c.isupper()}
-        requirements[b][a] = {c.lower() for c in glyphs if c.isupper()}
-    return requirements, partial(calc_total, lengths)
+    return reqs, partial(calc_total, lengths)
 
 
 def calc_total(lengths, state):
@@ -52,9 +50,9 @@ def mod_grid(text):
     grid, elements, keys = read_in(text)
     pos = elements['@']
     grid[pos] = '#'
-    for char, ori in zip('*&^@', [1, -1, 1j, -1j]):
+    for i, ori in enumerate([1, -1, 1j, -1j]):
         grid[pos + ori] = '#'
-        grid[pos + ori + ori * 1j] = char
+        grid[pos + ori * (1 + 1j)] = chr(ord('@') - i)
     return render(grid)
 
 
@@ -63,13 +61,13 @@ def solve(text):
     stacks = {k for k in elements if not k.isalnum()} - {'#', '.'}
     requirements, metric = precalc_moves(stacks, keys, elements, grid)
     states = [stacks]
-    for _ in range(len(keys)):
+    for _ in keys:
         states = trim([
-            state - {seq} | {seq + b}
+            state ^ {seq, seq + new}
             for state in states
             for seq in state
-            for b, reqs in requirements[seq[-1]].items()
-            if b not in seq and reqs.issubset(''.join(state))
+            for new, reqs in requirements[seq[-1]].items()
+            if new not in seq and reqs.issubset(''.join(state))
         ], metric)
     best = min(states, key=metric)
     print(best)

@@ -5,8 +5,7 @@ from toolkit import read_image, shortest_path
 
 
 def move(pos):
-    for ori in [1, -1, 1j, -1j]:
-        adj = pos + ori
+    for adj in (pos + ori for ori in [1, -1, 1j, -1j]):
         if adj in grid:
             yield adj
         if adj in duals:
@@ -15,16 +14,13 @@ def move(pos):
 
 def move_with_depth(state):
     pos, level = state
-    for ori in [1, -1, 1j, -1j]:
-        adj = pos + ori
-        if adj in grid:
+    for adj in (pos + ori for ori in [1, -1, 1j, -1j]):
+        if adj in inner:
+            yield from move_with_depth((duals[adj], level + 1))
+        elif adj in outer and (level > 0) and (grid[adj] not in {'AA', 'ZZ'}):
+            yield from move_with_depth((duals[adj], level - 1))
+        elif adj in grid:
             yield adj, level
-        if adj in duals:
-            name = grid[adj]
-            if adj in inner:
-                yield from move_with_depth((duals[adj], level + 1))
-            elif (level > 0) and (name not in {'AA', 'ZZ'}):
-                yield from move_with_depth((duals[adj], level - 1))
 
 
 # base
@@ -34,10 +30,9 @@ for pos, val in grid.copy().items():
     if val.isupper():
         for im in [1, 1j]:
             A, B, C = [pos - im, pos, pos + im]
-            seq = ''.join(grid.get(p, ' ') for p in [A, B, C])
-            if seq.endswith('.'):
+            if grid.get(C) == '.':
                 grid[B] = grid.pop(A) + grid.pop(B)
-            if seq.startswith('.'):
+            if grid.get(A) == '.':
                 grid[B] = grid.pop(B) + grid.pop(C)
 elements = {v: k for k, v in grid.items()}
 

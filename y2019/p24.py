@@ -24,21 +24,17 @@ def recursive_adjace(level, pos, center=complex(2, 2)):
 
 
 def evolve(bugs, adjacency, lim=None):
-    seen_states = set()
-    while lim is None or len(seen_states) < lim:
+    seen_states = {bugs}
+    while True:
         affected = {nei for tile in bugs for nei in adjacency(*tile)} | bugs
-        infested = set()
-        dead = set()
-
-        for tile in affected:
-            count = sum(nei in bugs for nei in adjacency(*tile))
-            if tile in bugs and count != 1:
-                dead.add(tile)
-            elif tile not in bugs and count in [1, 2]:
-                infested.add(tile)
-
-        bugs = bugs - dead | infested
-        if bugs in seen_states:
+        will_change = {
+            tile for tile in affected
+            for count in [sum(nei in bugs for nei in adjacency(*tile))]
+            if tile in bugs and count != 1
+            or tile not in bugs and count in [1, 2]
+        }
+        bugs = bugs ^ will_change
+        if bugs in seen_states or len(seen_states) == lim:
             break
         seen_states.add(bugs)
     return bugs
