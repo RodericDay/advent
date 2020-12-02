@@ -1,4 +1,10 @@
 import collections
+import os
+import re
+import sys
+from pathlib import Path
+
+import requests
 
 
 def render(grid, brush=None):
@@ -45,3 +51,13 @@ def shortest_path(start, end, move):
         path.append(end)
         end = seen[end]
     return path[::-1]
+
+
+def get_dat():
+    path = sys.argv[1]
+    year, qn = map(int, re.findall(r'\d+', sys.argv[1]))
+    url = f'https://adventofcode.com/{year}/day/{qn}/input'
+    cookies = {'session': os.environ['SESSION']}
+    response = requests.get(url, cookies=cookies)
+    response.raise_for_status()
+    Path(path).write_bytes(response.content)

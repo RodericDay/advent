@@ -1,11 +1,14 @@
+include .env
 FILE = $(shell find . -path "./y????/p??.py" -type f | xargs ls -rt | tail -n 1)
 DATA = $(shell echo $(FILE) | sed -e s/\.py/\.dat/)
 PYTHONPATH = .
 export
 
-main: venv/
-	@touch $(DATA)
+main: venv/ $(DATA)
 	@cat $(DATA) | venv/bin/python -u $(FILE)
+
+$(DATA):
+	@echo $(DATA) | venv/bin/python -c "import toolkit; toolkit.get_dat()" $(DATA)
 
 venv/: requirements.txt
 	rm -rf venv/
