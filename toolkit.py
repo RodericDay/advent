@@ -28,7 +28,7 @@ def read_image(text):
     for y, line in enumerate(text.splitlines()):
         for x, cell in enumerate(line):
             grid[complex(x, y)] = cell
-    return grid
+    return grid, x + 1, y + 1
 
 
 def shortest_path(start, end, move):
