@@ -1,6 +1,7 @@
 import collections
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -61,3 +62,9 @@ def get_dat():
     response = requests.get(url, cookies=cookies)
     response.raise_for_status()
     Path(path).write_bytes(response.content)
+
+
+def md5(strings):
+    cmd = ['md5'] + [c for s in strings for c in ['-s', s]]
+    out = subprocess.check_output(cmd).decode()
+    return re.findall(r'"(.+)"\) = (.+)', out)
