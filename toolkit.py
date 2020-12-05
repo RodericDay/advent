@@ -1,4 +1,5 @@
 import collections
+import itertools
 import os
 import re
 import subprocess
@@ -64,7 +65,9 @@ def get_dat():
     Path(path).write_bytes(response.content)
 
 
-def md5(strings):
-    cmd = ['md5'] + [c for s in strings for c in ['-s', s]]
-    out = subprocess.check_output(cmd).decode()
-    return re.findall(r'"(.+)"\) = (.+)', out)
+def md5gen(template, pattern=r'.+', batch=6000):
+    for i in itertools.count():
+        strings = (template.format(i=i * batch + k) for k in range(batch))
+        args = [c for s in strings for c in ['-s', s]]
+        out = subprocess.check_output(['md5'] + args).decode()
+        yield from re.findall(rf'"(.+)"\) = ({pattern})', out)
