@@ -71,3 +71,11 @@ def md5gen(template, pattern=r'.+', batch=6000):
         args = [c for s in strings for c in ['-s', s]]
         out = subprocess.check_output(['md5'] + args).decode()
         yield from re.findall(rf'"(.+)"\) = ({pattern})', out)
+
+
+def interpret(string, globals):
+    fn, *args = (
+        x if x.replace('_', '').isalpha() else eval(x)
+        for x in string.split()
+    )
+    globals[fn](**dict(zip(*[iter(args)] * 2)))
