@@ -75,7 +75,22 @@ def md5gen(template, pattern=r'.+', batch=6000):
 
 def interpret(string, globals):
     fn, *args = (
-        x if x.replace('_', '').isalpha() else eval(x)
+        x if x[0].isalpha() else eval(x)
         for x in string.split()
     )
     globals[fn](**dict(zip(*[iter(args)] * 2)))
+
+
+def loop_consume(lines, handler):
+    instructions = collections.deque(lines)
+    count = 0
+    while instructions:
+        ok = handler(instructions[0])
+        if ok:
+            instructions.popleft()
+            count = 0
+        elif count < len(instructions):
+            instructions.rotate(1)
+            count += 1
+        else:
+            raise RuntimeError('Reached steady state')

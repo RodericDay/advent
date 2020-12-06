@@ -30,8 +30,8 @@ def unzip_len(text, recurse=False):
 
 text = sys.stdin.read().strip()
 
-# ans1 = unzip_len(text)
-# print(ans1)
+ans1 = unzip_len(text)
+print(ans1)
 
 ans2 = unzip_len(text, recurse=True)
 print(ans2)
