@@ -1,34 +1,29 @@
 import collections
+import re
 import sys
 
 
 text = sys.stdin.read()
-text = text.replace('bags', 'bag')
-
-
-reverse = collections.defaultdict(list)
-bags = collections.defaultdict(list)
+rev = collections.defaultdict(list)
+fwd = collections.defaultdict(list)
 for line in text.splitlines():
-    source, targets = line.split('contain')
-    source = source.strip()
-    for target in targets.strip('.').split(','):
-        n, stuff = target.strip().split(' ', 1)
-        n = int('0' if n == 'no' else n)
-        reverse[stuff.strip()].append(source)
-        bags[source].append((n, stuff))
+    (_, src), *targets = re.findall(r'(\d*) ?(\w+ \w+) bag', line)
+    for n, tgt in targets:
+        rev[tgt].append(src)
+        fwd[src].append((tgt, int(n or '0')))
 
 
-edge = {'shiny gold bag'}
+edge = {'shiny gold'}
 seen = set()
 while edge:
-    edge = {new for old in edge for new in reverse[old]} - seen
+    edge = {new for old in edge for new in rev[old]} - seen
     seen |= edge
 print(len(seen))
 
 
-edge = [(1, 'shiny gold bag')]
+edge = [('shiny gold', 1)]
 seen = []
 while edge:
-    edge = [(n * m, name) for n, sub in edge for m, name in bags[sub] if n * m]
+    edge = [(new, n * m) for old, n in edge for new, m in fwd[old] if n * m]
     seen += edge
-print(sum(n for n, _ in seen))
+print(sum(n for _, n in seen))
