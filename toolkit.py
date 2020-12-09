@@ -1,8 +1,8 @@
 import collections
+import hashlib
 import itertools
 import os
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -65,20 +65,14 @@ def get_dat():
     Path(path).write_bytes(response.content)
 
 
-def md5gen(template, pattern=r'.+', batch=6000):
-    for i in itertools.count():
-        strings = (template.format(i=i * batch + k) for k in range(batch))
-        args = [c for s in strings for c in ['-s', s]]
-        out = subprocess.check_output(['md5'] + args).decode()
-        yield from re.findall(rf'"(.+)"\) = ({pattern})', out)
+def batch(iterable, size):
+    count = itertools.count()
+    for _, sub in itertools.groupby(iterable, lambda _: next(count) // size):
+        yield sub
 
 
-def interpret(string, globals):
-    fn, *args = (
-        x if x[0].isalpha() else eval(x)
-        for x in string.split()
-    )
-    globals[fn](**dict(zip(*[iter(args)] * 2)))
+def md5(string):
+    return hashlib.md5(string.encode()).hexdigest()
 
 
 def loop_consume(lines, handler):
