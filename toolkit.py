@@ -1,12 +1,17 @@
 import collections
 import hashlib
 import itertools
+import math
 import os
 import re
 import sys
 from pathlib import Path
 
 import requests
+
+
+def lcm(a, b):
+    return abs(a * b) // math.gcd(a, b)
 
 
 def render(grid, brush=None):
