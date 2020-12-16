@@ -10,6 +10,10 @@ from pathlib import Path
 import requests
 
 
+def integers(line):
+    return [int(n) for n in re.findall(r'\d+', line)]
+
+
 def lcm(a, b):
     return abs(a * b) // math.gcd(a, b)
 
