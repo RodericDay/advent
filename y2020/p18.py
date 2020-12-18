@@ -2,30 +2,18 @@ import re
 import sys
 
 
-def reval1(ln):
-    a, *rest = ln.split()
-    for b, c in zip(*[iter(rest)] * 2):
-        a = eval(f'{a} {b} {c}')
-    return a
-
-
-def reval2(ln):
-    while '+' in ln:
-        ln = re.sub(r'\d+ \+ \d+', lambda m: str(eval(m.group(0))), ln)
-    return eval(ln)
-
-
-def process(ln, reval):
-    while '(' in ln:
-        ln = re.sub(r'\(([^\(\)]+)\)', lambda m: str(reval(m.group(1))), ln)
-    return reval(ln)
+class X(int):
+    def __sub__(a, y): return X(int(a) * y)
+    def __add__(a, y): return X(int(a) + y)
+    def __mul__(a, y): return X(int(a) + y)
 
 
 text = sys.stdin.read()
 ans1 = 0
 ans2 = 0
+trans = str.maketrans('*+', '-*')
 for ln in text.splitlines():
-    ans1 += int(process(ln, reval=reval1))
-    ans2 += int(process(ln, reval=reval2))
+    ans1 += eval(re.sub(r'(\d+)', r'X(\1)', ln.replace('*', '-')))
+    ans2 += eval(re.sub(r'(\d+)', r'X(\1)', ln.translate(trans)))
 print(ans1)
 print(ans2)

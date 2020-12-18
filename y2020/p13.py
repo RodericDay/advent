@@ -19,8 +19,7 @@ print((a - tid) * b)
 
 args = [(i, int(val)) for i, val in enumerate(string.split(',')) if val != 'x']
 (last, step), *tail = args
-for offset, value in tail:
-    i = next(i for i in count() if (last + i * step + offset) % value == 0)
-    last += i * step
-    step = toolkit.lcm(step, value)
+for offset, val in tail:
+    last += next(i for i in count(step=step) if (last + i + offset) % val == 0)
+    step = toolkit.lcm(step, val)
 print(last)
