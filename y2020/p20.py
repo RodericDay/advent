@@ -9,12 +9,10 @@ from functools import reduce
 
 def render(grid):
     return '\n'.join(
-        '\n'.join(''.join([n[1:-1]
-            for n in ln])
+        '\n'.join(''.join([n[1:-1] for n in ln])
         for ln in zip(*[grid[y, x].splitlines()[1:-1] for x in range(size)]))
         for y in range(size)
     )
-
 
 def get_borders(content):
     a, *_, b = content.splitlines()
@@ -34,10 +32,8 @@ def flipH(string):
     return '\n'.join(ln[::-1] for ln in string.splitlines())
 
 
-def rot90(n):
-    def inner(string):
-        return flipH(transpose(string))
-    return inner
+def rot90(string):
+    return flipH(transpose(string))
 
 
 def noop(string):
@@ -45,9 +41,17 @@ def noop(string):
 
 
 def variants(string):
-    alts = [noop, flipH], [noop, flipV], [noop, rot90(1), rot90(2), rot90(3)]
+    alts = [noop, flipH], [noop, flipV], [noop, transpose]
     for ops in itertools.product(*alts):
         yield reduce(lambda s, f: f(s), ops, string)
+
+
+def UD(A, B):
+    return A.splitlines()[-1] == B.splitlines()[0]
+
+
+def LR(A, B):
+    return UD(rot90(A), rot90(B))
 
 
 def search_in(source, target):
@@ -78,44 +82,38 @@ for (aid, A), (bid, B) in itertools.combinations(borders.items(), 2):
     if set(A) & set(B):
         adj[aid].add(bid)
         adj[bid].add(aid)
-corn = [v for v, ks in adj.items() if len(ks) == 2]
-print(math.prod(corn))
+corners = [v for v, ks in adj.items() if len(ks) == 2]
+print(math.prod(corners))
 
 
-gids = [[None for _ in range(size)] for _ in range(size)]
-
-gids[0][0] = corn[0]
-gids[1][0], gids[0][1] = adj[gids[0][0]]
-gids[1][1], = adj[gids[1][0]] & adj[gids[0][1]] - {gids[0][0]}
-
-for x in range(2, size):
-    gids[0][x], = adj[gids[0][x - 1]] - {gids[0][x - 2], gids[1][x - 1]}
-    gids[1][x], = adj[gids[0][x]] & adj[gids[1][x - 1]] - {gids[0][x - 1]}
-
-for y in range(2, size):
-    gids[y][0], = adj[gids[y - 1][0]] - {gids[y - 2][0], gids[y - 1][1]}
-    for x in range(1, size):
-        gids[y][x], = adj[gids[y][x - 1]] & adj[gids[y - 1][x]] - {gids[y - 1][x - 1]}
-
-
-grid = {(y, x): tiles[gids[y][x]] for x in range(size) for y in range(size)}
-
-
-def UD(A, B):
-    return A.splitlines()[-1] == B.splitlines()[0]
-
-def LR(A, B):
-    return UD(rot90(1)(A), rot90(1)(B))
-
-
+gids = {}
 for y in range(size):
     for x in range(size):
         if (y, x) == (0, 0):
-            grid[y, x] = flipV(grid[y, x])
-        elif y == 0:
-            grid[y, x] = next(pic for pic in variants(grid[0, x]) if LR(grid[y, x - 1], pic))
-        else:
-            grid[y, x] = next(pic for pic in variants(grid[y, x]) if UD(grid[y - 1, x], pic))
+            gids[y, x] = corners[0]
+
+gids[1, 0], gids[0, 1] = adj[gids[0, 0]]
+gids[1, 1], = adj[gids[1, 0]] & adj[gids[0, 1]] - {gids[0, 0]}
+
+for x in range(2, size):
+    gids[0, x], = adj[gids[0, x - 1]] - {gids[0, x - 2], gids[1, x - 1]}
+    gids[1, x], = adj[gids[0, x]] & adj[gids[1, x - 1]] - {gids[0, x - 1]}
+
+for y in range(2, size):
+    gids[y, 0], = adj[gids[y - 1, 0]] - {gids[y - 2, 0], gids[y - 1, 1]}
+    for x in range(1, size):
+        gids[y, x], = adj[gids[y, x - 1]] & adj[gids[y - 1, x]] - {gids[y - 1, x - 1]}
+
+grid = {(y, x): tiles[gids[y, x]] for x in range(size) for y in range(size)}
+grid[0, 0] = flipV(grid[0, 0])
+for y in range(size):
+    for x in range(size):
+        if (x, y) != (0, 0):
+            grid[y, x], = (
+                pic for pic in variants(grid[y, x])
+                if ((y - 1, x) not in grid or UD(grid[y - 1, x], pic))
+                and ((y, x - 1) not in grid or LR(grid[y, x - 1], pic))
+            )
 
 
 monster = '''
