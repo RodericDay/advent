@@ -6,29 +6,12 @@ import sys
 import math
 from functools import reduce
 
-import toolkit
-
-
-def apply(cell):
-    string, *fns = cell
-    for fn in fns:
-        if fn is not None:
-            string = fn(string)
-    return string
-
-
-def apply2(string, fns):
-    for fn in fns:
-        if fn is not None:
-            string = fn(string)
-    return string
-
 
 def render(grid):
     return '\n'.join(
         '\n'.join(''.join([n[1:-1]
             for n in ln])
-        for ln in zip(*[apply(grid[y, x]).splitlines()[1:-1] for x in range(size)]))
+        for ln in zip(*[grid[y, x].splitlines()[1:-1] for x in range(size)]))
         for y in range(size)
     )
 
@@ -37,6 +20,10 @@ def get_borders(content):
     a, *_, b = content.splitlines()
     c, *_, d = [''.join(ln) for ln in zip(*content.splitlines())]
     return [a, b, c, d, a[::-1], b[::-1], c[::-1], d[::-1]]
+
+
+def transpose(string):
+    return '\n'.join(''.join(ln) for ln in zip(*string.splitlines()))
 
 
 def flipV(string):
@@ -49,7 +36,7 @@ def flipH(string):
 
 def rot90(n):
     def inner(string):
-        return toolkit.render({k * 1j ** n: v for k, v in toolkit.read_image(string)[0].items()})
+        return flipH(transpose(string))
     return inner
 
 
@@ -60,7 +47,7 @@ def noop(string):
 def variants(string):
     alts = [noop, flipH], [noop, flipV], [noop, rot90(1), rot90(2), rot90(3)]
     for ops in itertools.product(*alts):
-        yield reduce(lambda s, f: f(s), ops, string), ops
+        yield reduce(lambda s, f: f(s), ops, string)
 
 
 def search_in(source, target):
@@ -111,26 +98,24 @@ for y in range(2, size):
         gids[y][x], = adj[gids[y][x - 1]] & adj[gids[y - 1][x]] - {gids[y - 1][x - 1]}
 
 
-options = list(itertools.product([None, flipH], [None, flipV], [None] + [rot90(n) for n in range(3)]))
-
-grid = {(y, x): (tiles[gids[y][x]],) for x in range(size) for y in range(size)}
-grid[0, 0] = (flipV(grid[0, 0][0]),)
+grid = {(y, x): tiles[gids[y][x]] for x in range(size) for y in range(size)}
 
 
-for x in range(1, size):
-    goal = [ln[-1] for ln in apply(grid[0, x - 1]).splitlines()]
-    for chain in options:
-        if goal == [ln[0] for ln in apply(grid[0, x] + chain).splitlines()]:
-            grid[0, x] += chain
-            break
+def UD(A, B):
+    return A.splitlines()[-1] == B.splitlines()[0]
 
-for y in range(1, size):
+def LR(A, B):
+    return UD(rot90(1)(A), rot90(1)(B))
+
+
+for y in range(size):
     for x in range(size):
-        goal = apply(grid[y - 1, x]).splitlines()[-1]
-        for chain in options:
-            if goal == apply(grid[y, x] + chain).splitlines()[0]:
-                grid[y, x] += chain
-                break
+        if (y, x) == (0, 0):
+            grid[y, x] = flipV(grid[y, x])
+        elif y == 0:
+            grid[y, x] = next(pic for pic in variants(grid[0, x]) if LR(grid[y, x - 1], pic))
+        else:
+            grid[y, x] = next(pic for pic in variants(grid[y, x]) if UD(grid[y - 1, x], pic))
 
 
 monster = '''
@@ -139,5 +124,5 @@ monster = '''
 .#..#..#..#..#..#...
 '''[1:-1]
 src = render(grid)
-found = max([search_in(pic, monster) for pic, _ in variants(src)], key=len)
+found = max([search_in(pic, monster) for pic in variants(src)], key=len)
 print(src.count('#') - len(found) * monster.count('#'))
