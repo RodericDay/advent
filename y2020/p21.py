@@ -1,54 +1,44 @@
+import re
 import sys
 
 
+def words(string):
+    return frozenset(re.findall(r'\w+', string))
+
+
 text = sys.stdin.read()
-test = '''mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)'''
+recipes = dict(map(words, ln.split('contains')) for ln in text.splitlines())
+all_ingredients = {item for group in recipes.keys() for item in group}
+all_allergens = {item for group in recipes.values() for item in group}
 
+# any ingredient can be any allergen,
+# but if the allergen *is* there, and the ingredient *isn't*
+# then the ingredient *cannot* be the allergen
+options = {ingredient: set(all_allergens) for ingredient in all_ingredients}
+for ingredients, allergens in recipes.items():
+    for f2 in all_ingredients - ingredients:
+        options[f2] -= allergens
 
-contains = {}
-for line in text.splitlines():
-    food, allergens = line[:-1].split(' (contains ')
-    food = frozenset(s.strip() for s in food.split(' '))
-    allergens = frozenset(s.strip() for s in allergens.split(','))
-    contains[food] = allergens
-
-all_allergens = {a for b in contains.values() for a in b}
-all_foods = {a for b in contains.keys() for a in b}
-
-reverse = {}
-for food in all_foods:
-    reverse[food] = set(all_allergens)
-
-for food, allergens in contains.items():
-    for f2 in reverse:
-        if f2 not in food:
-            reverse[f2] -= allergens
-
-clean = {k for k, v in reverse.items() if not v}
-ans = 0
-for v in contains.keys():
-    ans += len(v & clean)
+clean = {ing for ing, als in options.items() if not als}
+ans = sum(len(recipe & clean) for recipe in recipes)
 print(ans)
 
 
-final = {v: k - clean for k, v in contains.items()}
-
-
-def recurse(ings, known=tuple()):
-    if not ings:
-        yield known
+def recurse(leftover, known=[]):
+    if not leftover:
+        yield dict(known)
     else:
-        key, = min(ings, key=lambda k: len(k))
-        for val in sorted(ings.pop(frozenset({key}))):
-            expa = known + ((key, val),)
-            lob = {k - {key}: v - {val} for k, v in ings.items()}
-            yield from recurse(lob, expa)
+        ing, = key = min(leftover, key=len)
+        for alg in leftover.pop(key):
+            a1 = {k - {ing}: v - {alg} for k, v in leftover.items()}
+            a2 = known + [(ing, alg)]
+            yield from recurse(a1, a2)
 
 
-for out in recurse(dict(final)):
-    d = dict(out)
-    if all(({d[e] for e in k} <= set(v)) for k, v in final.items()):
-        print(','.join(v for _, v in sorted(out)))
+def valid(mapping):
+    return all(mapping[a] in fs for fs, als in recipes.items() for a in als)
+
+
+cleaned_up = {v: k - clean for k, v in recipes.items()}
+maps, = (maps for maps in recurse(cleaned_up) if valid(maps))
+print(','.join(v for k, v in sorted(maps.items())))
