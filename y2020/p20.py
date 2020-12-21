@@ -1,18 +1,19 @@
-# flake8: noqa
-import re
 import collections
+import functools
 import itertools
-import sys
 import math
-from functools import reduce
+import re
+import sys
 
 
 def render(grid):
-    return '\n'.join(
-        '\n'.join(''.join([n[1:-1] for n in ln])
-        for ln in zip(*[grid[y, x].splitlines()[1:-1] for x in range(size)]))
-        for y in range(size)
-    )
+    lines = []
+    for y in range(size):
+        groups = [tiles[grid[y, x]].splitlines()[1:-1] for x in range(size)]
+        for lns in zip(*groups):
+            lines.append(''.join(ln[1:-1] for ln in lns))
+    return '\n'.join(lines)
+
 
 def get_borders(content):
     a, *_, b = content.splitlines()
@@ -43,7 +44,7 @@ def noop(string):
 def variants(string):
     alts = [noop, flipH], [noop, flipV], [noop, transpose]
     for ops in itertools.product(*alts):
-        yield reduce(lambda s, f: f(s), ops, string)
+        yield functools.reduce(lambda s, f: f(s), ops, string)
 
 
 def UD(A, B):
@@ -67,6 +68,14 @@ def search_in(source, target):
     return out
 
 
+def reconcile(A, B, condition):
+    tiles[A], tiles[B] = next(
+        (X, Y)
+        for X, Y in itertools.product(variants(tiles[A]), variants(tiles[B]))
+        if condition(X, Y)
+    )
+
+
 text = sys.stdin.read().strip()
 tiles = {}
 borders = {}
@@ -86,35 +95,32 @@ corners = [v for v, ks in adj.items() if len(ks) == 2]
 print(math.prod(corners))
 
 
-gids = {}
-for y in range(size):
-    for x in range(size):
-        if (y, x) == (0, 0):
-            gids[y, x] = corners[0]
+A = min(corners)
+B, C = adj.pop(A)
 
-gids[1, 0], gids[0, 1] = adj[gids[0, 0]]
-gids[1, 1], = adj[gids[1, 0]] & adj[gids[0, 1]] - {gids[0, 0]}
+grid = {(y, x): None for x in range(size) for y in range(size)}
+grid[0, 0] = A
+grid[0, 1] = B
+grid[1, 0] = C
+reconcile(A, B, condition=LR)
+reconcile(A, C, condition=UD)
 
-for x in range(2, size):
-    gids[0, x], = adj[gids[0, x - 1]] - {gids[0, x - 2], gids[1, x - 1]}
-    gids[1, x], = adj[gids[0, x]] & adj[gids[1, x - 1]] - {gids[0, x - 1]}
+seen = {A, B, C}
+for z in range(2, 2 * size - 1):
+    # determine new pieces from intersection between 2 neighbors
+    for y, x in {(y, z - y) for y in range(1, z)}.intersection(grid):
+        U, L = (y - 1, x), (y, x - 1)
+        grid[y, x], = adj[grid[U]] & adj[grid[L]] - seen
+        reconcile(grid[L], grid[y, x], condition=LR)
+        seen.add(grid[y, x])
 
-for y in range(2, size):
-    gids[y, 0], = adj[gids[y - 1, 0]] - {gids[y - 2, 0], gids[y - 1, 1]}
-    for x in range(1, size):
-        gids[y, x], = adj[gids[y, x - 1]] & adj[gids[y - 1, x]] - {gids[y - 1, x - 1]}
-
-grid = {(y, x): tiles[gids[y, x]] for x in range(size) for y in range(size)}
-grid[0, 0] = flipV(grid[0, 0])
-for y in range(size):
-    for x in range(size):
-        if (x, y) != (0, 0):
-            grid[y, x], = (
-                pic for pic in variants(grid[y, x])
-                if ((y - 1, x) not in grid or UD(grid[y - 1, x], pic))
-                and ((y, x - 1) not in grid or LR(grid[y, x - 1], pic))
-            )
-
+    # determine new piece from only one alternative left
+    for y, x in {(0, z), (z, 0)}.intersection(grid):
+        opts = {(y - 1, x): UD, (y, x - 1): LR}
+        P, fn = next(p for p in opts.items() if p[0] in grid)
+        grid[y, x], = adj[grid[P]] - seen
+        reconcile(grid[P], grid[y, x], condition=fn)
+        seen.add(grid[y, x])
 
 monster = '''
 ..................#.
