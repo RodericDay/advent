@@ -7,6 +7,9 @@ export
 main: venv/ $(DATA)
 	@cat $(DATA) | venv/bin/python -u $(FILE)
 
+flake: venv/
+	venv/bin/flake8 --exclude=venv/
+
 $(DATA):
 	@echo $(DATA) | venv/bin/python -c "import toolkit; toolkit.get_dat()" $(DATA)
 
