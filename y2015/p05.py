@@ -1,7 +1,3 @@
-import re
-import sys
-
-
 def checks1(string):
     yield len(re.findall(r'([aeiou])', string)) >= 3
     yield len(re.findall(r'(.)\1', string))
@@ -15,8 +11,6 @@ def checks2(string):
 
 ans1 = 0
 ans2 = 0
-for line in sys.stdin.read().splitlines():
+for line in data_file.read_text().splitlines():
     ans1 += all(checks1(line))
     ans2 += all(checks2(line))
-print(ans1)
-print(ans2)

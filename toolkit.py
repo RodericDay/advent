@@ -1,9 +1,12 @@
+import builtins
 import collections
 import hashlib
 import itertools
+import importlib
 import math
 import os
 import re
+import string
 import sys
 from pathlib import Path
 
@@ -64,14 +67,14 @@ def shortest_path(start, end, move):
     return path[::-1]
 
 
-def get_dat():
-    path = sys.argv[1]
-    year, qn = map(int, re.findall(r'\d+', sys.argv[1]))
-    url = f'https://adventofcode.com/{year}/day/{qn}/input'
-    cookies = {'session': os.environ['SESSION']}
-    response = requests.get(url, cookies=cookies)
-    response.raise_for_status()
-    Path(path).write_bytes(response.content)
+def ensure_data(path):
+    if not path.exists():
+        year, qn = map(int, re.findall(r'\d+', sys.argv[1]))
+        url = f'https://adventofcode.com/{year}/day/{qn}/input'
+        cookies = {'session': os.environ['SESSION']}
+        response = requests.get(url, cookies=cookies)
+        response.raise_for_status()
+        path.write_bytes(response.content)
 
 
 def batch(iterable, size):
@@ -97,3 +100,15 @@ def loop_consume(lines, handler):
             count += 1
         else:
             raise RuntimeError('Reached steady state')
+
+
+if __name__ == '__main__':
+    data_file = Path(sys.argv[1]).with_suffix('.dat')
+    ensure_data(data_file)
+    builtins.data_file = data_file
+    builtins.string = string
+    builtins.re = re
+    rel = re.sub(r'.+(y\d+)/(p\d+).+', r'\1.\2', os.environ['FILE'])
+    mod = importlib.import_module(rel)
+    print(getattr(mod, 'ans1', None))
+    print(getattr(mod, 'ans2', None))
