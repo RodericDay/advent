@@ -1,49 +1,38 @@
-import sys
-from itertools import permutations
+import itertools
 
 
-text = sys.stdin.read()
-
-
-# transform text into data structures
+# transform text into two helpful data structures
 valid = set()
-target = {}
-for y, line in enumerate(text.splitlines()):
+special_locations = {}
+for y, line in enumerate(data_file.read_text().splitlines()):
     for x, char in enumerate(line):
-        if char == '#':
-            continue
-        valid.add(x + 1j * y)
-        if char != '.':
-            target[x + 1j * y] = char
+        if char != '#':
+            valid.add((x, y))
+            if char != '.':
+                special_locations[(x, y)] = char
 
 
-# generate travel map
+# generate travel graph from every starting point to every other point via BFS
 graph = {}
-for A in target:
+steps = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+for A in special_locations:
     seen = {A}
     boundary = {A}
-    pending = set(target) - seen
-    N = 0
-    while pending:
-        N += 1
-        boundary = {pos + step for pos in boundary for step in [1, -1, 1j, -1j]}
+    locations_pending = set(special_locations) - seen
+    for n_steps_taken in itertools.count(1):
+        boundary = {(x + dx, y + dy) for x, y in boundary for dx, dy in steps}
         boundary &= valid - seen
         seen.update(boundary)
-
-        for B in boundary & pending:
-            pending -= {B}
-            graph[target[A], target[B]] = N
+        for B in boundary & locations_pending:
+            locations_pending -= {B}
+            graph[special_locations[A], special_locations[B]] = n_steps_taken
+        if not locations_pending:
+            break
 
 
 # use map to determine routes
-calc = lambda combo: sum(graph[pair] for pair in zip(combo, combo[1:]))
-
 z = '0'
-rest = set(target.values()) - {z}
-options = [(z,) + combo for combo in permutations(rest)]
-ans = min(options, key=calc)
-print(calc(ans))
-
-options = [(z,) + combo + (z,) for combo in permutations(rest)]
-ans = min(options, key=calc)
-print(calc(ans))
+not_z = set(special_locations.values()) - {z}
+calc = lambda combo: sum(graph[a, b] for a, b in zip(combo, combo[1:]))
+ans1 = min(calc((z, *combo)) for combo in itertools.permutations(not_z))
+ans2 = min(calc((z, *combo, z)) for combo in itertools.permutations(not_z))

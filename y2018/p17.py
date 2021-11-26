@@ -5,7 +5,7 @@ import sys
 
 def read_in():
     grid = collections.defaultdict(lambda: ' ')
-    for _ in sys.stdin.read().splitlines():
+    for _ in data_file.read_text().splitlines():
         _ = _.replace(',', ';')
         _ = re.sub(r'(\d+)\.\.(\d+)', r'range(\1, \2 + 1)', _)
         _ = re.sub(r'=(\d+)', r'=[\1]', _)
@@ -56,5 +56,5 @@ grid = read_in()
 ymin, *_, ymax = sorted(y for x, y in grid if grid[x, y] == '#')
 flow(grid, (500, ymin), ymax)
 counter = collections.Counter(grid.values())
-print(counter['~'] + counter['|'])
-print(counter['~'])
+ans1 = counter['~'] + counter['|']
+ans2 = counter['~']
