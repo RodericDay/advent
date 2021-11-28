@@ -105,7 +105,7 @@ def loop_consume(lines, handler):
 if __name__ == '__main__':
     data_file = Path(sys.argv[1]).with_suffix('.dat')
     ensure_data(data_file)
-    builtins.data_file = data_file
+    builtins.df = data_file
     builtins.string = string
     builtins.re = re
     rel = re.sub(r'.+(y\d+)/(p\d+).+', r'\1.\2', os.environ['FILE'])
