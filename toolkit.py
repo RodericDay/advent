@@ -1,9 +1,11 @@
 import builtins
 import collections
+import functools
 import hashlib
-import itertools
 import importlib
+import itertools
 import math
+import operator
 import os
 import re
 import string
@@ -13,8 +15,7 @@ from pathlib import Path
 import requests
 
 
-def integers(line):
-    return [int(n) for n in re.findall(r'\d+', line)]
+product = functools.partial(functools.reduce, operator.mul)
 
 
 def lcm(a, b):
@@ -106,6 +107,7 @@ if __name__ == '__main__':
     data_file = Path(sys.argv[1]).with_suffix('.dat')
     ensure_data(data_file)
     builtins.df = data_file
+    builtins.text = data_file.read_text()
     builtins.string = string
     builtins.re = re
     rel = re.sub(r'.+(y\d+)/(p\d+).+', r'\1.\2', os.environ['FILE'])
