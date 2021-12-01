@@ -112,5 +112,5 @@ if __name__ == '__main__':
     builtins.re = re
     rel = re.sub(r'.+(y\d+)/(p\d+).+', r'\1.\2', os.environ['FILE'])
     mod = importlib.import_module(rel)
-    print(getattr(mod, 'ans1', None))
-    print(getattr(mod, 'ans2', None))
+    print('ans1', getattr(mod, 'ans1', None))
+    print('ans2', getattr(mod, 'ans2', None))
