@@ -12,7 +12,7 @@ def sum_counts(counts):
     return final
 
 
-polymer, eqs = text.split('\n\n')
+polymer, eqs = open(0).read().split('\n\n')
 mapping = dict(eq.split(' -> ') for eq in eqs.splitlines())
 grow = {(a, b): ((a, x), (x, b)) for (a, b), x in mapping.items()}
 
@@ -27,5 +27,5 @@ for n in range(40):
     singles[polymer[-1]] += 1
     xmax, *_, xmin = [N // 2 for _, N in singles.most_common()]
     scores[n + 1] = xmax - xmin
-ans1 = scores[10]
-ans2 = scores[40]
+print(scores[10])
+print(scores[40])

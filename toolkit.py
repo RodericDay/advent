@@ -106,11 +106,3 @@ def loop_consume(lines, handler):
 if __name__ == '__main__':
     data_file = Path(sys.argv[1]).with_suffix('.dat')
     ensure_data(data_file)
-    builtins.df = data_file
-    builtins.text = data_file.read_text()
-    builtins.string = string
-    builtins.re = re
-    rel = re.sub(r'.+(y\d+)/(p\d+).+', r'\1.\2', os.environ['FILE'])
-    mod = importlib.import_module(rel)
-    print('ans1', getattr(mod, 'ans1', None))
-    print('ans2', getattr(mod, 'ans2', None))
