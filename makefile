@@ -4,7 +4,7 @@ DATA = $(shell echo $(FILE) | sed s/.py/.dat/)
 PYTHONPATH = .
 export
 
-main: venv/ $(DATA)
+main: venv/
 	@venv/bin/python -u toolkit.py $(FILE)
 	@cat $(DATA) | venv/bin/python -u $(FILE)
 
