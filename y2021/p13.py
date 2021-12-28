@@ -1,7 +1,4 @@
-import toolkit
-
-
-dots, instructions = text.split('\n\n')
+dots, instructions = open(0).read().split('\n\n')
 dots = {eval(pair) for pair in dots.splitlines()}
 ans1 = None
 for line in instructions.splitlines():
@@ -13,4 +10,12 @@ for line in instructions.splitlines():
         dots = {(x, y) if y < zz else (x, 2 * zz - y) for x, y in dots}
     if ans1 is None:
         ans1 = len(dots)
-ans2 = '\n' + toolkit.render({complex(*k): '#' for k in dots})
+x, *_, X = sorted(x for x, y in dots)
+y, *_, Y = sorted(y for x, y in dots)
+ans2 = ''
+for yi in range(y, Y + 1):
+    for xi in range(x, X + 1):
+        ans2 += '#' if (xi, yi) in dots else ' '
+    ans2 += '\n'
+print(ans1)
+print(ans2)

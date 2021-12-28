@@ -4,7 +4,7 @@ fam = lambda c: objs.index(c) // 2
 val = lambda c: objs.index(c) % 2
 ans1 = 0
 scores = []
-for ln in text.splitlines():
+for ln in open(0).read().splitlines():
     stack = []
     for c in ln:
         if val(c) == 0:
@@ -21,3 +21,5 @@ for ln in text.splitlines():
             score += fam(stack.pop()) + 1
         scores.append(score)
 ans2 = sorted(scores)[len(scores) // 2]
+print(ans1)
+print(ans2)

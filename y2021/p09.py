@@ -1,12 +1,13 @@
-from toolkit import read_image
-
+grid = {}
+for y, line in enumerate(open(0)):
+    for x, char in enumerate(line[:-1]):
+        grid[complex(x, y)] = char
 
 ans1 = 0
-grid = read_image(text)[0]
 for p, v in grid.items():
     if all(grid[p + s] > v for s in [1, -1, 1j, -1j] if p + s in grid):
         ans1 += int(v) + 1
-
+print(ans1)
 
 valid = {k for k, v in grid.items() if v != '9'}
 pending = valid.copy()
@@ -20,4 +21,4 @@ while pending:
     pending -= seen
     basin_sizes.append(len(seen))
 *_, x, y, z = sorted(basin_sizes)
-ans2 = x * y * z
+print(x * y * z)

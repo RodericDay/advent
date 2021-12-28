@@ -22,10 +22,10 @@ def solve(graph, part2=False):
 
 
 graph = defaultdict(set)
-for ln in text.splitlines():
-    a, b = ln.split('-')
+for ln in open(0):
+    a, b = ln[:-1].split('-')
     graph[a].add(b)
     graph[b].add(a)
 graph = dict(graph)
-ans1 = solve(graph)
-ans2 = solve(graph, True)
+print(solve(graph))
+print(solve(graph, True))

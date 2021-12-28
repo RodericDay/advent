@@ -19,6 +19,6 @@ for turn in range(1000):
 
     hashable = frozenset(state.items())
     if hashable in seen:
-        print(turn)
+        print(turn + 1)
         break
     seen.add(hashable)

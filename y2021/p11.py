@@ -1,9 +1,4 @@
 import itertools
-import toolkit
-
-
-state = {k: int(v) for k, v in toolkit.read_image(text)[0].items()}
-D8 = [dx + dy for dx in [1, 0, -1] for dy in [1j, 0, -1j] if dx + dy]
 
 
 def flash(k, flashed_this_round):
@@ -12,6 +7,12 @@ def flash(k, flashed_this_round):
         if p in state and p not in flashed_this_round:
             state[p] += 1
 
+
+state = {}
+for y, line in enumerate(open(0)):
+    for x, char in enumerate(line[:-1]):
+        state[complex(x, y)] = int(char)
+D8 = [dx + dy for dx in [1, 0, -1] for dy in [1j, 0, -1j] if dx + dy]
 
 ans1 = 0
 for i in itertools.count(1):
@@ -31,3 +32,5 @@ for i in itertools.count(1):
     if len({v for v in state.values()}) == 1:
         ans2 = i
         break
+print(ans1)
+print(ans2)

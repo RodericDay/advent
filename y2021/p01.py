@@ -1,3 +1,3 @@
-ns = [int(n) for n in text.splitlines()]
-ans1 = sum(b > a for a, b in zip(ns, ns[1:]))
-ans2 = sum(sum(w[:-1]) < sum(w[1:]) for w in zip(ns, ns[1:], ns[2:], ns[3:]))
+ns = [int(n) for n in open(0)]
+print(sum(b > a for a, b in zip(ns, ns[1:])))
+print(sum(sum(w[:-1]) < sum(w[1:]) for w in zip(ns, ns[1:], ns[2:], ns[3:])))

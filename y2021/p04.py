@@ -1,4 +1,4 @@
-A, *B = text.split('\n\n')
+A, *B = open(0).read().split('\n\n')
 calls = [int(n) for n in A.split(',')]
 boards = [[[int(n) for n in ln.split()] for ln in b.splitlines()] for b in B]
 
@@ -16,5 +16,5 @@ for n in calls:
             pending.append(board)
     boards = pending
 
-ans1 = win_scores[0]
-ans2 = win_scores[-1]
+print(win_scores[0])
+print(win_scores[-1])
