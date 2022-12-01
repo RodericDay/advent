@@ -12,8 +12,6 @@ import string
 import sys
 from pathlib import Path
 
-import requests
-
 
 product = functools.partial(functools.reduce, operator.mul)
 
@@ -68,16 +66,6 @@ def shortest_path(start, end, move):
     return path[::-1]
 
 
-def ensure_data(path):
-    if not path.exists():
-        year, qn = map(int, re.findall(r'\d+', sys.argv[1]))
-        url = f'https://adventofcode.com/{year}/day/{qn}/input'
-        cookies = {'session': os.environ['SESSION']}
-        response = requests.get(url, cookies=cookies)
-        response.raise_for_status()
-        path.write_bytes(response.content)
-
-
 def batch(iterable, size):
     count = itertools.count()
     for _, sub in itertools.groupby(iterable, lambda _: next(count) // size):
@@ -101,8 +89,3 @@ def loop_consume(lines, handler):
             count += 1
         else:
             raise RuntimeError('Reached steady state')
-
-
-if __name__ == '__main__':
-    data_file = Path(sys.argv[1]).with_suffix('.dat')
-    ensure_data(data_file)
