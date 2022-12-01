@@ -1,13 +1,19 @@
 include .env
 export
 
+.SILENT:
+
 PYTHONPATH := .
-FILE := $(shell find . -path "./y????/p??.py" -type f | xargs ls -rt | tail -n 1)
-YEAR := $(shell echo ${FILE} | sed 's/[^0-9]/ /g' | cut -d' ' -f4)
-DAY := $(shell echo ${FILE} | sed 's/[^0-9]/ /g' | cut -d' ' -f6 | bc)
-URL := https://adventofcode.com/${YEAR}/day/${DAY}/input
-DATA := $(shell echo ${FILE} | sed s/.py/.dat/)
+CODE := $(shell find . -path "./y????/p??.py" -type f | xargs ls -rt | tail -n 1)
+DATA := $(shell echo ${CODE} | sed s/.py/.dat/)
+YEAR := $(shell echo ${CODE} | sed 's/[^0-9]/ /g' | cut -d' ' -f4)
+DAY := $(shell echo ${CODE} | sed 's/[^0-9]/ /g' | cut -d' ' -f6)
+URL := https://adventofcode.com/${YEAR}/day/`echo ${DAY} | bc`/input
 
 main:
-	@test -f ${DATA} || curl -s -b "session=${SESSION}" ${URL} > ${DATA}
-	@cat $(DATA) | python3 -u $(FILE)
+	# avoid spam in the lead up to the event
+	test ${YEAR}${DAY} -le `date +%Y%d`
+	# only poll if data isn't yet stored locally
+	test -f ${DATA} || curl -s -b "session=${SESSION}" ${URL} > ${DATA}
+	# have fun! (access data through `open(0)`)
+	cat $(DATA) | python3 -u ${CODE}
