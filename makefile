@@ -10,7 +10,7 @@ DAY := $(shell echo ${CODE} | sed 's/[^0-9]/ /g' | cut -d' ' -f6)
 URL := https://adventofcode.com/${YEAR}/day/`echo ${DAY} | bc`/input
 
 pyrun: ${DATA}
-	PYTHONPATH=. python3 -u ${CODE} < ${DATA}
+	cat ${DATA} | docker run -v `pwd`:/app/ -w /app/ -i --rm python:latest python -u ${CODE}
 
 ${DATA}:
 	# avoid spam in the lead up to the event
