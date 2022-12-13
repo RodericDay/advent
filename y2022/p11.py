@@ -1,41 +1,42 @@
-import functools
 import operator
 import re
+from collections import namedtuple
+from math import prod
 
 
-class Monkey:
+def make_monkey(description):
+    relevant = re.findall(r'\d+|old|\*|\+', description)
+    parsed = [int(n) if n.isdigit() else n for n in relevant]
+    _, *items, _, op, y, div, aa, bb = parsed
 
-    def __init__(self, description):
-        relevant = re.findall(r'\d+|old|\*|\+', description)
-        parsed = [int(n) if n.isdigit() else n for n in relevant]
-        self.idx, *self.items, _, op, op_arg, self.div, aa, bb = parsed
-        op = {'*': operator.mul, '+': operator.add}[op]
-        self.fn = lambda x: op(x, x if op_arg == 'old' else op_arg)
-        self.target = lambda x: aa if x % self.div == 0 else bb
-
-    def __repr__(self):
-        return f'Monkey_{self.idx}({self.items})'
+    op = {'*': operator.mul, '+': operator.add}[op]
+    grow_item = lambda x: op(x, x if y == 'old' else y)
+    find_target = lambda x: aa if x % div == 0 else bb
+    return Monkey(items, grow_item, find_target)
 
 
-def play(monkeys, n_rounds, act):
+def play(monkeys, n_rounds, shrink):
     counts = [0 for _ in monkeys]
     for _ in range(n_rounds):
-        for monkey in monkeys:
+        for idx, monkey in enumerate(monkeys):
             while monkey.items:
-                counts[monkey.idx] += 1
-                item = act(monkey, monkey.items.pop())
-                monkeys[monkey.target(item)].items.append(item)
-    yy, zz = sorted(counts)[-2:]
-    return yy * zz
+                counts[idx] += 1
+                item = monkey.items.pop()
+                item = monkey.grow_item(item)
+                item = shrink(item)
+                idx = monkey.find_target(item)
+                monkeys[idx].items.append(item)
+    return prod(sorted(counts)[-2:])
 
 
 text = open(0).read()
+Monkey = namedtuple('Monkey', ['items', 'grow_item', 'find_target'])
 
-monkeys = [Monkey(descr) for descr in text.strip().split('\n\n')]
-ans1 = play(monkeys, 20, lambda m, i: int(m.fn(i) / 3))
+monkeys = [make_monkey(descr) for descr in text.strip().split('\n\n')]
+ans1 = play(monkeys, 20, lambda x: x // 3)
 print(ans1)
 
-monkeys = [Monkey(descr) for descr in text.strip().split('\n\n')]
-lim = functools.reduce(operator.mul, [m.div for m in monkeys])
-ans2 = play(monkeys, 10_000, lambda m, i: m.fn(i) % lim)
+lim = prod(map(int, re.findall(r'divisible by (\d+)', text)))
+monkeys = [make_monkey(descr) for descr in text.strip().split('\n\n')]
+ans2 = play(monkeys, 10_000, lambda x: x % lim)
 print(ans2)
