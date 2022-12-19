@@ -1,61 +1,48 @@
-import collections
-import itertools
 import re
+import itertools
+
 
 text = open(0).read()
-
-
-graph = collections.defaultdict(dict)
-rates = {}
+graph = {}
+vals = {}
 for ln in text.splitlines():
-    source, rate, *leads_to = re.findall(r'[A-Z]{2}|\d+', ln)
-    for out in leads_to:
-        graph[out][source] = 1
-        graph[source][out] = 1
-    rates[source] = int(rate)
+    pos, val, *adjs = re.findall(r'[A-Z]{2}|\d+', ln)
+    if int(val):
+        vals[pos] = int(val)
+    graph[pos] = {k: 1 for k in adjs}
+old = {k: v.copy() for k, v in graph.items()}
 
-
-costs = {}
 for k in graph:
-    edge = set(graph[k])
+    graph[k][k] = 0
+    edge = {k}
     seen = set()
-    cost = 1
-    while True:
-        for e in edge:
-            if (k, e) in costs:
-                costs[k, e] = min(costs[k, e], cost)
-            else:
-                costs[k, e] = cost
-        cost += 1
-        edge = {n for e in edge for n in graph[e]} - seen
-        if seen == set(graph):
-            break
+    for step in range(1, 1000):
+        edge = {n for k in edge for n in old[k]} - seen
         seen |= edge
+        for n in edge:
+            graph[k].setdefault(n, step)
 
 
-def for_one(combo, lim):
-    tt = 0
-    bob = [0]
-    for a, b in zip(('AA',) + combo, combo):
-        tt = costs[a, b]
-        for _ in range(tt):
-            bob.append(bob[-1])
-        bob.append(bob[-1] + rates[b])
-    pending = max(0, lim - len(bob))
-    bob += [bob[-1]] * pending
-    return sum(bob[:lim])
+def tic(pending, start, left):
+    out = []
+    for end in pending:
+        rem = max(0, left - graph[start][end] - 1)
+        out.append([vals[end] * rem, end, rem])
+    return sorted(out, reverse=True)
 
 
-def generate_combos(pending, left, carry=('AA',)):
-    if left < 0 or not pending:
-        yield carry[1:]
+def solve1(pending, total, pos, t_left):
+    if not pending:
+        yield total
     else:
-        for k in pending:
-            yield from generate_combos(pending - {k}, left - costs[carry[-1], k], carry + (k,))
+        if ans1 > total + sum(vals[p] for p in pending) * t_left:
+            return
+        for contrib, pos, t_left in tic(pending, pos, t_left):
+            yield from solve1(pending - {pos}, total + contrib, pos, t_left)
 
 
-combos = generate_combos({k for k, v in rates.items() if v}, lim=30)
-best = max(combos, key=for_one)
-print(best)
-print(for_one(best))
-# 2615
+ans1 = 0
+for ans in solve1(set(vals), 0, 'AA', 30):
+    if ans > ans1:
+        ans1 = ans
+print(ans1)
