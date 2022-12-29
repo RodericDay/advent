@@ -1,67 +1,79 @@
 import re
 
 
-def render(grid):
-    xmin, *_, xmax = sorted(int(p.real) for p in grid)
-    ymin, *_, ymax = sorted(int(p.imag) for p in grid)
-    res = int(size % 9)
-    for y in range(ymin, ymax + 1, res):
-        for x in range(xmin, xmax + 1, res):
-            print(grid.get(complex(x, y), ' '), end='')
-        print()
+def transform(pos, drx, rotations, size, X, Y):
+    x, y = pos.real % size, pos.imag % size
+    for _ in range(rotations % 4):
+        x, y = size - 1 - y, x
+    return size * complex(X, Y) + complex(x, y), drx * 1j ** rotations
 
 
-def move_50_1(grid, pos, drx, size=50):
-    pos += drx
-    if grid.get(pos) is None:
-        match pos.imag // size, pos.real // size, drx:
-            case -1,  1, -1j: return pos + size *  3j, drx
-            case -1,  2, -1j: return pos + size *  1j, drx
-            case  0,  0, -1 : return pos + size *  2 , drx
-            case  0,  3,  1 : return pos + size * -2 , drx
-            case  1,  0, -1 : return pos + size *  1 , drx
-            case  1,  0, -1j: return pos + size *  2j, drx
-            case  1,  2,  1 : return pos + size * -1 , drx
-            case  1,  2,  1j: return pos + size * -1j, drx
-            case  2, -1, -1 : return pos + size *  2 , drx
-            case  2,  2,  1 : return pos + size * -2 , drx
-            case  3, -1, -1 : return pos + size *  1 , drx
-            case  3,  1,  1 : return pos + size * -1 , drx
-            case  3,  1,  1j: return pos + size * -3j, drx
-            case  4,  0,  1j: return pos + size * -2j, drx
-            case default: print('x', default)
-    return pos, drx
+def wrap1(pos, drx, size):
+    x, y = pos.real, pos.imag
+    match x // 50, y // 50, drx:
+        case  0,  0, -1 : return size *  2  + pos, -1
+        case  0,  1, -1 : return size *  1  + pos, -1
+        case  0,  1, -1j: return size *  2j + pos, -1j
+        case  0,  4,  1j: return size * -2j + pos,  1j
+        case  1,  3,  1 : return size * -1  + pos,  1
+        case  1,  3,  1j: return size * -3j + pos,  1j
+        case  1, -1, -1j: return size *  3j + pos, -1j
+        case  2,  1,  1 : return size * -1  + pos,  1
+        case  2,  1,  1j: return size * -1j + pos,  1j
+        case  2,  2,  1 : return size * -2  + pos,  1
+        case  2, -1, -1j: return size *  1j + pos, -1j
+        case  3,  0,  1 : return size * -2  + pos,  1
+        case -1,  2, -1 : return size *  2  + pos, -1
+        case -1,  3, -1 : return size *  1  + pos, -1
 
 
-def solve(inst, grid, teleport):
-    pos = min(grid, key=lambda p: (p.real == 0, p.imag))
-    drx = 1
-    grid = grid.copy()
-    for step in re.findall(r'(R|L|\d+)', inst):
-        if step.isdigit():
-            for _ in range(int(step)):
-                grid[pos] = {1j: 'v', -1j: '^', -1: '<', 1: '>'}[drx]
-                new, dr2 = teleport(grid, pos, drx)
-                match grid[new]:
-                    case '#':
-                        break
-                    case _:
-                        pos, drx = new, dr2
-        else:
-            drx *= {'R': 1j, 'L': -1j}[step]
-    render(grid)
-    return 4 * int(pos.real + 1) + 1000 * int(pos.imag + 1) + {1: 0, 1j: 1, -1: 2, -1j: 3}[drx]
+def wrap2(pos, drx, size):
+    x, y = pos.real, pos.imag
+    match x // 50, y // 50, drx:
+        case  0,  0, -1 : return transform(pos, drx,  2, size, 0, 2)
+        case -1,  2, -1 : return transform(pos, drx,  2, size, 1, 0)
+        case  1, -1, -1j: return transform(pos, drx,  1, size, 0, 3)
+        case  2,  1,  1 : return transform(pos, drx, -1, size, 2, 0)
+        case  0,  1, -1j: return transform(pos, drx,  1, size, 1, 1)
+        case  1,  3,  1 : return transform(pos, drx, -1, size, 1, 2)
+        case  2,  2,  1 : return transform(pos, drx,  2, size, 2, 0)
+        case  1,  3,  1j: return transform(pos, drx,  1, size, 0, 3)
+        case  0,  4,  1j: return transform(pos, drx,  0, size, 2, 0)
+        case  0,  1, -1 : return transform(pos, drx, -1, size, 0, 2)
+        case -1,  3, -1 : return transform(pos, drx, -1, size, 1, 0)
+        case  2, -1, -1j: return transform(pos, drx,  0, size, 0, 3)
+        case  2,  1,  1j: return transform(pos, drx,  1, size, 1, 1)
+        case  3,  0,  1 : return transform(pos, drx,  2, size, 1, 2)
 
 
-def main():
-    global size
-    text = open(0).read()
-    src, inst = text.split('\n\n')
-    grid = {complex(x, y): c for y, l in enumerate(src.splitlines())
+def main(text, v, wrap):
+    *grid, _, path = text.splitlines()
+    grid = {complex(x, y): c for y, l in enumerate(grid)
                              for x, c in enumerate(l) if c in '.#'}
-    size = (len(grid) // 6) ** 0.5
-    print(solve(inst, grid, eval(f'move_{int(size)}_1')))
-    # print(solve(inst, grid, eval(f'move_{int(size)}_2')))
+    pos, drx = min(grid, key=lambda pos: (pos.imag, pos.real)), 1
+    size = int((len(grid) / 6) ** 0.5)
+
+    for move in re.findall(r'\d+|R|L', path):
+        match move:
+            case 'L':
+                drx *= -1j
+            case 'R':
+                drx *= +1j
+            case _:
+                for _ in range(int(move)):
+                    p, d = pos + drx, drx
+                    if p not in grid:
+                        p, d = wrap(p, d, size)
+                    if grid[p] == '.':
+                        pos, drx = p, d
+
+    return int(1000 * (pos.imag + 1) + 4 * (pos.real + 1) + [1, 1j, -1, -1j].index(drx))
 
 
-main()
+text = open(0).read()
+
+ans1 = main(text, 1, wrap1)
+print(ans1)
+
+ans2 = main(text, 2, wrap2)
+print(ans2)
