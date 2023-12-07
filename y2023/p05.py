@@ -26,9 +26,10 @@ print(ans2)
 
 # old method, slow
 def backward(n):
-    for group in groups:
+    for group in groups[::-1]:
         n = next((n - (b - a) for b, a, c in group if b <= n < b + c), n)
     return n
 
+
 pairs = [(a, a + b) for a, b in zip(seed[::2], seed[1::2])]
-next(n for n in itertools.count(ans2) if any(a <= backward(n) < a + b for a, b in pairs))
+next(n for n in itertools.count(ans2) if any(a <= backward(n) < b for a, b in pairs))

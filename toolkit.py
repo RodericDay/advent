@@ -16,10 +16,6 @@ from pathlib import Path
 product = functools.partial(functools.reduce, operator.mul)
 
 
-def lcm(a, b):
-    return abs(a * b) // math.gcd(a, b)
-
-
 def render(grid, brush=None):
     if brush is None:
         brush = {v: v for v in grid.values()}
