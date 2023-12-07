@@ -3,22 +3,29 @@ export
 
 .SILENT:
 
-CODE := $(shell find . -path "./y????/p??.*" -type f | xargs ls -rt | tail -n 1)
-YEAR := $(shell echo ${CODE} | sed 's/[^0-9]/ /g' | cut -d' ' -f4)
-DAY0 := $(shell echo ${CODE} | sed 's/[^0-9]/ /g' | cut -d' ' -f6)
-DATA := ./y${YEAR}/p${DAY0}.dat
-URL := https://adventofcode.com/${YEAR}/day/`echo ${DAY0} | bc`
+FILE := $(shell find . -path "./y????/p??.*" -type f | xargs ls -rt | tail -n 1)
 
-pyrun: ${DATA}
-	cat ${DATA} | docker run -v `pwd`:/app/ -w /app/ -i --rm python:latest python -u ./y${YEAR}/p${DAY0}.py
+YEAR := $(shell echo ${FILE} | sed -E 's/.+y([0-9]+).+/\1/')
+DAY := $(shell echo ${FILE} | sed -E 's/.+p([0-9]+).+/\1/' | bc)
+URL := https://adventofcode.com/${YEAR}/day/${DAY}
 
-${DATA}:
+BASE := $(shell echo ${FILE} | sed -E 's/\....?$$//')
+CODE := $(BASE).py
+DATA := $(BASE).dat
+TEST := $(BASE).dtt
+
+main: ${TEST}
+	echo 'test':
+	cat ${TEST} | docker compose run advent python -u ${CODE}
+
+clean: ${DATA}
+	echo 'real:'
+	cat ${DATA} | docker compose run advent python -u ${CODE}
+
+${DATA} ${TEST}:
 	# avoid spam in the lead up to the event
-	test ${YEAR}${DAY0} -le `date +%Y%d`
+	test ${DAY} -le `date +%d` || test ${YEAR} -lt `date +%Y`
 	# only poll if data isn't yet stored locally
 	test -f ${DATA} || curl -s -b "session=${SESSION}" ${URL}/input > ${DATA}
-
-# 	# avoid spam in the lead up to the event
-# 	test ${YEAR}${DAY0} -le `date +%Y%d`
-# 	# only poll if data isn't yet stored locally
-# 	test -f ${DATA} || curl -s $(URL) | tr '\n' '@' | sed -E "s/.+<pre><code>//" | sed -E "s/<\/code><\/pre>.+//" | tr '@' '\n' > $(DATA)
+	# try to get test data
+	test -f ${TEST} || curl -s ${URL} | tr '\n' '@' | perl -pe 's|.+?<pre><code>(.+?)</code></pre>.+|\1|' | tr '@' '\n' > ${TEST}

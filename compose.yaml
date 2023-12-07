@@ -1,0 +1,5 @@
+services:
+  advent:
+    image: python:latest
+    volumes: [.:/app/]
+    working_dir: /app/
