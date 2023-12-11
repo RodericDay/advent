@@ -16,11 +16,11 @@ TEST := $(BASE).dtt
 
 main: ${TEST}
 	echo 'test':
-	cat ${TEST} | docker compose run advent python -u ${CODE}
+	cat ${TEST} | docker compose run --rm advent python -u ${CODE}
 
 clean: ${DATA}
 	echo 'real:'
-	cat ${DATA} | docker compose run advent python -u ${CODE}
+	cat ${DATA} | docker compose run --rm advent python -u ${CODE}
 
 ${DATA} ${TEST}:
 	# avoid spam in the lead up to the event
