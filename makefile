@@ -14,12 +14,6 @@ CODE := $(BASE).py
 DATA := $(BASE).dat
 TEST := $(BASE).dtt
 
-save:
-	git add .
-	test `git log -1 --format=%s` == `cat VERSION` \
-		&& git commit --amend --reuse-message=head \
-		|| git commit -m `cat VERSION`
-	git log -1
 
 main: ${TEST}
 	echo 'test':
@@ -28,6 +22,12 @@ main: ${TEST}
 clean: ${DATA}
 	echo 'real:'
 	cat ${DATA} | docker compose run --rm advent python -u ${CODE}
+
+save:
+	git add .
+	test `git log -1 --format=%s` == `cat VERSION` \
+		&& git commit --amend --reuse-message=head \
+		|| git commit -m `cat VERSION`
 
 ${DATA} ${TEST}:
 	# avoid spam in the lead up to the event
