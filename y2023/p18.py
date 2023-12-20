@@ -3,7 +3,7 @@ def perimeter(pts):
     for i in range(len(pts)):
         dist = pts[i - 1] - pts[i]
         n += abs(dist.real) + abs(dist.imag)
-    return int(n)
+    return int(n / 2) + 1
 
 
 def area(pts):
@@ -23,7 +23,7 @@ for line in text.splitlines():
     n = int(n)
     d = 1j ** 'RDLU'.index(d)
     pts.append(pts[-1] + d * n)
-print(area(pts) + perimeter(pts) // 2 + 1)
+print(area(pts) + perimeter(pts))
 
 pts = [0]
 for line in text.splitlines():
@@ -31,7 +31,7 @@ for line in text.splitlines():
     n = int(s[2:7], 16)
     d = 1j ** int(s[7])
     pts.append(pts[-1] + d * n)
-print(area(pts) + perimeter(pts) // 2 + 1)
+print(area(pts) + perimeter(pts))
 
 
 # def render(graph, default='.'):
