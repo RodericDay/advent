@@ -4,6 +4,7 @@ export
 .SILENT:
 
 FILE := $(shell find . -path "./y????/p??.*" -type f | xargs ls -rt | tail -n 1)
+PYTHON := docker compose run --rm advent python
 
 YEAR := $(shell echo ${FILE} | sed -E 's/.+y([0-9]+).+/\1/')
 DAY := $(shell echo ${FILE} | sed -E 's/.+p([0-9]+).+/\1/' | bc)
@@ -14,20 +15,20 @@ CODE := $(BASE).py
 DATA := $(BASE).dat
 TEST := $(BASE).dtt
 
-
 main: ${TEST}
-	echo 'test':
-	cat ${TEST} | docker compose run --rm advent python -u ${CODE}
+	echo 'test:'
+	cat ${TEST} | ${PYTHON} -u ${CODE}
 
 clean: ${DATA}
 	echo 'real:'
-	cat ${DATA} | docker compose run --rm advent python -u ${CODE}
+	cat ${DATA} | ${PYTHON} -u ${CODE}
 
 save:
 	git add .
 	test `git log -1 --format=%s` == `cat VERSION` \
 		&& git commit --amend --reuse-message=head \
 		|| git commit -m `cat VERSION`
+	git push -f
 
 ${DATA} ${TEST}:
 	# avoid spam in the lead up to the event
