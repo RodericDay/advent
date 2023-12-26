@@ -1,6 +1,4 @@
-import random
 import itertools
-import copy
 import collections
 
 
@@ -11,6 +9,27 @@ def make_graph(text):
         for bb in bbs:
             graph[bb] |= {aa}
     return graph
+
+
+def rank_wires(graph, n_cycles=100, n_top=20):
+    tally = collections.Counter()
+    for aa, bb in sorted(itertools.combinations(graph, 2))[:n_cycles]:
+        path = shortest_path(graph, aa, bb)
+        tally.update(frozenset(pair) for pair in zip(path, path[1:]))
+    return [k for k, _ in tally.most_common(n_top)]
+
+
+def shortest_path(graph, aa, bb):
+    state = {aa: None}
+    seen = {}
+    while bb not in state:
+        state = {new: old for old in state for new in graph[old] if new not in seen}
+        seen |= state
+
+    path = [bb]
+    while path[-1] != aa:
+        path.append(seen[path[-1]])
+    return path
 
 
 def cut(graph, wires):
@@ -35,30 +54,10 @@ def subgraphs(graph):
     return conns
 
 
-def shortest_path(graph, aa, bb):
-    state = {aa: None}
-    seen = {}
-    while bb not in state:
-        state = {new: old for old in state for new in graph[old] if new not in seen}
-        seen |= state
-
-    path = [bb]
-    while path[-1] != aa:
-        path.append(seen[path[-1]])
-    return path
-
-
-def rank_wires(graph, n_cycles=100, n_top=20):
-    tally = collections.Counter()
-    for aa, bb in sorted(itertools.combinations(graph, 2))[:n_cycles]:
-        path = shortest_path(graph, aa, bb)
-        tally.update(frozenset(pair) for pair in zip(path, path[1:]))
-    return [k for k, _ in tally.most_common(n_top)]
-
-
 text = open(0).read()
 graph = make_graph(text)
-for triplet in itertools.combinations(rank_wires(graph), 3):
+wires = rank_wires(graph)
+for triplet in itertools.combinations(wires, 3):
     mod_graph = cut(graph, triplet)
     subs = subgraphs(mod_graph)
     if len(subs) == 2:

@@ -28,11 +28,10 @@ save:
 	test `git log -1 --format=%s` == `cat VERSION` \
 		&& git commit --amend --reuse-message=head \
 		|| git commit -m `cat VERSION`
-	git push -f
 
 ${DATA} ${TEST}:
 	# avoid spam in the lead up to the event
-	test ${DAY} -le `date +%d` || test ${YEAR} -lt `date +%Y`
+	TZ=America/New_York test ${DAY} -le `date +%d` || test ${YEAR} -lt `date +%Y`
 	# only poll if data isn't yet stored locally
 	test -f ${DATA} || curl -s -b "session=${SESSION}" ${URL}/input > ${DATA}
 	# try to get test data
