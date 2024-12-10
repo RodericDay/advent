@@ -22,5 +22,3 @@ print(sum(solve(ops)))
 # concat = lambda a, b: int(f'{a}{b}')
 concat = lambda a, b: a * 10 ** math.ceil(math.log10(b + 1)) + b
 print(sum(solve(ops + [concat])))
-
-
